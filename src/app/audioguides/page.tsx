@@ -5,6 +5,7 @@ import firebaseApp from "../firebaseService";
 import { collection, query, where, getDocs, getFirestore, deleteDoc, doc } from "firebase/firestore";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../authContext";
+import Link from "next/link";
 
 
 export default function ListAudioGuides() {
@@ -61,7 +62,7 @@ export default function ListAudioGuides() {
                 <ul>
                     {audioGuides.map((audioGuide: any) => (
                         <li key={audioGuide.id}>
-                            <a href={`/audioguides/edit?guideId=${audioGuide.id}`}>{audioGuide.data.title}</a> - <button onClick={() => { deleteAudioguide(audioGuide.id) }}>Eliminar</button>
+                            <Link href={`/audioguides/edit?guideId=${audioGuide.id}`}>{audioGuide.data.title}</Link> - <button className="text-white bg-red-900 hover:bg-red-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium" onClick={() => { deleteAudioguide(audioGuide.id) }}>Eliminar</button>
                         </li>
                     ))}
                 </ul>

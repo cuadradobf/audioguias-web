@@ -35,9 +35,9 @@ export default function NewAudioGuide() {
     };
 
     return (
-        <>
+        <div className="flex flex-col">
             <div>Nueva AudioGuia</div>
-            <form onSubmit={handleSubmit}>
+            <form className="flex flex-col" onSubmit={handleSubmit}>
                 <label htmlFor="title">Título</label>
                 <input
                     type="text"
@@ -103,6 +103,6 @@ export default function NewAudioGuide() {
 
                 <button type="submit" >Create</button>
             </form>
-        </>
+        </div>
     );
 }

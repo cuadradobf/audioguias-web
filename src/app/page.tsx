@@ -21,7 +21,6 @@ export default function Home() {
       <section className="hero">
         <h2>Descubre lugares fascinantes con nuestras audio guías</h2>
         <p>Explora destinos turísticos de manera única y envolvente. Crea y comparte tus propias guías.</p>
-        {!!user ? <p>Bienvenido {user.email} <cite onClick={logout}>Logout</cite></p> : <a href="/login">Login</a> }
       </section>
 
     </div>

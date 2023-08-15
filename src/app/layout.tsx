@@ -2,6 +2,8 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { AuthProvider } from './authContext'
+import NavBar from './navbar'
+import Footer from './footer'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -15,13 +17,20 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+
+  const classesBody = "min-h-screen flex flex-col " + inter.className;
+
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={classesBody}>
         <AuthProvider>
-          <header>HEADER</header> 
-          {children}
-          <footer>FOOTER</footer>
+          <div className="grow flex flex-col">
+            <NavBar />
+            <div className="grow flex flex-col justify-center p-5">
+            {children}
+            </div>
+            <Footer />
+          </div>
         </AuthProvider>
       </body>
     </html>
