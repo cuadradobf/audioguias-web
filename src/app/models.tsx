@@ -9,6 +9,7 @@ interface AudioGuide {
     city: string;
     cost: number;
     user: string;
+    placeId: string;
 }
 
 interface User {

@@ -3,6 +3,7 @@ export default function Download() {
       <div>
         <h2>Download our app</h2>
         <p>Download our Android application to be able to enjoy all the content from your phone.</p>
+        <button className="defaultButton">Download</button>
       </div>
     )
   }

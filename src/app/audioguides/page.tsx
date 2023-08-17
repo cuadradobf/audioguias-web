@@ -24,7 +24,6 @@ export default function ListAudioGuides() {
             alert(err);
         }
     }
-    //TODO: Implementar loading
     const fetchData = async () => {
         const data = new Array<any>();
         const q = query(collection(db, "audioGuide"), where("user", "==", auth.currentUser?.email));
@@ -62,7 +61,7 @@ export default function ListAudioGuides() {
                 <ul>
                     {audioGuides.map((audioGuide: any) => (
                         <li key={audioGuide.id}>
-                            <Link href={`/audioguides/edit?guideId=${audioGuide.id}`}>{audioGuide.data.title}</Link> - <button className="text-white bg-red-900 hover:bg-red-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium" onClick={() => { deleteAudioguide(audioGuide.id) }}>Eliminar</button>
+                            <Link href={`/audioguides/edit?guideId=${audioGuide.id}`}>{audioGuide.data.title}</Link> - <button className="redButton" onClick={() => { deleteAudioguide(audioGuide.id) }}>Eliminar</button>
                         </li>
                     ))}
                 </ul>

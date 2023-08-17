@@ -103,37 +103,92 @@ export default function SignUp() {
     }
 
     return (
-      <form id="registrationForm" onSubmit={handleSubmit}>
-        <h2>Registration</h2>
+      
+        
+        <form className="flex items-center flex-col"  id="registrationForm" onSubmit={handleSubmit}>
+          
+          <div className="defaultTitle">
+                Registration
+          </div>
+      
+          {error != '' && (<p className="error">Error: {error}</p>)}
 
-        {error != '' && (<p className="error">Error: {error}</p>)}
+          <div className="formDiv">
+            <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+              <label 
+                className="defaultLabel"
+                htmlFor="regName">
+                  Name
+              </label>
+              <input 
+                className="defaultInput"
+                type="text" 
+                id="regName" 
+                placeholder="Name"
+                value={name} 
+                onChange={(ev) => { setName(ev.target.value) }} 
+                required/>
+              <label 
+                className="defaultLabel"
+                htmlFor="regSurname">
+                  Surname (optional)
+              </label>
+              <input 
+                className="defaultInput"
+                type="text" 
+                id="regSurname" 
+                placeholder="Surname"
+                onChange={(ev) => { setSurname(ev.target.value) }} 
+                value={surname} />
 
-        <div>
-          <label htmlFor="regName">Name</label>
-          <input type="text" id="regName" value={name} onChange={(ev) => { setName(ev.target.value) }} required/>
-        </div>
+              <label 
+                className="defaultLabel"
+                htmlFor="regEmail">
+                  Email
+              </label>
+              <input 
+                className="defaultInput"
+                type="email" 
+                id="regEmail" 
+                placeholder="name@company.com"
+                onChange={(ev) => { setEmail(ev.target.value) }}  
+                value={email} 
+                required/>
 
-        <div>
-          <label htmlFor="regSurname">Surname (optional)</label>
-          <input type="text" id="regSurname" onChange={(ev) => { setSurname(ev.target.value) }} value={surname} />
-        </div>
+              <label 
+                className="defaultLabel"
+                htmlFor="regPassword">
+                  Password
+              </label>
+              <input 
+                className="defaultInput"
+                type="password" 
+                id="regPassword" 
+                placeholder="••••••••"
+                onChange={(ev) => { setPassword(ev.target.value) }} 
+                value={password} 
+                required/>
 
-        <div>
-          <label htmlFor="regEmail">Email</label>
-          <input type="email" id="regEmail" onChange={(ev) => { setEmail(ev.target.value) }}  value={email} required/>
-        </div>
+              <label 
+                className="defaultLabel"
+                htmlFor="regConfirmPassword">
+                  Confirm Password
+              </label>
+              <input 
+                className="defaultInput"
+                type="password" 
+                id="regConfirmPassword" 
+                placeholder="••••••••"
+                onChange={(ev) => { setConfirmPassword(ev.target.value) }} 
+                value={confirmPassword} 
+                required/>
+              <button className="defaultButton" type="submit">Register</button>
+            </div>
+          </div>
 
-        <div>
-          <label htmlFor="regPassword">Password</label>
-          <input type="password" id="regPassword" onChange={(ev) => { setPassword(ev.target.value) }} value={password} required/>
-        </div>
-
-        <div>
-          <label htmlFor="regConfirmPassword">Confirm Password</label>
-          <input type="password" id="regConfirmPassword" onChange={(ev) => { setConfirmPassword(ev.target.value) }} value={confirmPassword} required/>
-        </div>
-
-        <button type="submit">Register</button>
-      </form>
+          
+            
+        </form>
+      
     )
   }

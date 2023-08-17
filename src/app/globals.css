@@ -25,3 +25,167 @@
   background-color: rgb(253, 134, 134);
   border-radius: 4px;
 }
+.defaultLabel{
+  
+  
+
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1a202c;
+  margin-bottom: 2px;
+  margin-top: 2px;
+}
+
+
+.defaultTitle {
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #1a202c;
+}
+
+.defaultInput {
+  background-color: #f9fafb;
+  border: 1px solid #d1d5db;
+  color: #4b5563;
+  font-size: 0.875rem;
+  border-radius: 0.375rem;
+  padding: 0.625rem;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  width: 100%;
+}
+
+.defaultInput:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
+
+/* Estilos específicos para pantallas pequeñas (sm) */
+@media (min-width: 640px) {
+  .defaultInput {
+    font-size: 0.875rem;
+  }
+}
+
+/* Estilos para modo oscuro */
+.dark .defaultInput {
+  background-color: #4a5568;
+  border: 1px solid #718096;
+  color: #cbd5e0;
+}
+
+.dark .defaultInput:focus {
+  border-color: #63b3ed;
+  box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.5);
+}
+
+.defaultButton {
+  width: 100%;
+  background-color: #1d4ed8;
+  color: white;
+  font-weight: 500;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.375rem;
+  text-align: center;
+  outline: none;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.defaultButton:hover {
+  background-color: #2563eb;
+}
+
+.defaultButton:focus {
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.5);
+  outline: none;
+}
+
+/* Estilos para modo oscuro */
+.dark .defaultButton {
+  background-color: #2563eb;
+}
+
+.dark .defaultButton:hover {
+  background-color: #1e40af;
+}
+
+.dark .defaultButton:focus {
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.5);
+  outline: none;
+}
+
+.redButton {
+  width: 100%;
+  background-color: #d8301d;
+  color: white;
+  font-weight: 500;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.375rem;
+  text-align: center;
+  outline: none;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+}
+
+.redButton:hover {
+  background-color: #d45345;
+}
+
+.redButton:focus {
+  box-shadow: 0 0 0 3px rgba(206, 22, 19, 0.5);
+  outline: none;
+}
+
+/* Estilos para modo oscuro */
+.dark .redButton {
+  background-color: #d8301d;
+}
+
+.dark .redButton:hover {
+  background-color: #d45345;
+}
+
+.dark .redButton:focus {
+  box-shadow: 0 0 0 3px  rgba(206, 22, 19, 0.5);
+  outline: none;
+}
+
+.formDiv {
+  width: 100%;
+  background-color: white;
+  border-radius: 0.375rem;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s;
+}
+
+/* Estilos para pantallas medianas (md) */
+@media (min-width: 768px) {
+  .formDiv {
+    margin-top: 0;
+  }
+}
+
+/* Estilos para pantallas pequeñas (sm) y pantallas medianas (md) */
+@media (max-width: 639px), (min-width: 768px) {
+  .formDiv {
+    max-width: 20rem;
+  }
+}
+
+/* Estilos para pantallas extragrandes (xl) */
+@media (min-width: 1280px) {
+  .formDiv {
+    padding: 0;
+  }
+}
+
+/* Estilos para modo oscuro */
+.dark .formDiv {
+  border: 1px solid #4a5568;
+  background-color: #2d3748;
+}

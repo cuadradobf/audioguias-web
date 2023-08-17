@@ -44,19 +44,38 @@ export default function Reset() {
         }
     }
     return (
-        <form id="resetPassword" onSubmit={handleSubmit}>
-            <h2>Reset password</h2>
+        <div className="flex flex-col">
+            <div className="mb-6 text-2xl font-semibold text-gray-900 dark:text-white">    
+                Reset password  
+            </div>
 
             {error != '' && (<p className="error">Error: {error}</p>)}
 
-            <p>Forgot your password? Send an email to reset it:</p>
-
-            <div>
-                <label htmlFor="resetEmail">Email</label>
-                <input type="text" id="resetEmail" value={email} onChange={(ev) => { setEmail(ev.target.value) }} required/>
-            </div>
-
-            <button type="submit">Send</button>
-        </form>
+            <form id="resetPassword" className="flex flex-col w-full max-w-lg" onSubmit={handleSubmit}>
+                <div className="flex flex-wrap -mx-3 mb-6"> 
+                    <div className="w-full px-3">
+                        <label className="defaultLabel" htmlFor="resetPassword">
+                            Forgot your password? Put your email to reset it:
+                        </label>
+                        <input 
+                            className="defaultInput"
+                            type="text" 
+                            id="resetEmail" 
+                            placeholder="name@company.com" 
+                            value={email} 
+                            onChange={(ev) => { setEmail(ev.target.value) }} required
+                        />
+                        <div className="md:flex md:items-center">
+                            <button 
+                                className="defaultButton" 
+                                type="submit">
+                                    Send
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
     )
   }

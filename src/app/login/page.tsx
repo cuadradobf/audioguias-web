@@ -48,6 +48,9 @@ export default function Login() {
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
+      {
+        //TODO: Quitar el logo o cambiar la imagen
+      }
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
         <Link href="/" className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
           <img className="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg" alt="logo" />
@@ -64,13 +67,23 @@ export default function Login() {
             <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
               <div>
 
-                <label htmlFor="loginEmail" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
-                <input type="text" id="loginEmail" value={email} required className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onChange={(ev) => { setEmail(ev.target.value) }} placeholder="name@company.com" />
+                <label htmlFor="loginEmail" className="defaultLabel">Email</label>
+                <input 
+                  type="text" 
+                  id="loginEmail" 
+                  value={email} 
+                  required 
+                  className="defaultInput" 
+                  onChange={(ev) => { setEmail(ev.target.value) }} 
+                  placeholder="name@company.com" />
               </div>
               <div>
-                <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                <input className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="••••••••" type="password" id="loginPassword" value={password} onChange={(ev) => { setPassword(ev.target.value) }} required />
+                <label htmlFor="password" className="defaultLabel">Password</label>
+                <input className="defaultInput" placeholder="••••••••" type="password" id="loginPassword" value={password} onChange={(ev) => { setPassword(ev.target.value) }} required />
               </div>
+              {
+                //TODO: Quitar remember me
+              }
               <div className="flex items-center justify-between">
                 <div className="flex items-start">
                   <div className="flex items-center h-5">
@@ -82,7 +95,7 @@ export default function Login() {
                 </div>
                 <Link href="/login/reset" className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500">Forgot password?</Link>
               </div>
-              <button type="submit" className="w-full text-white bg-blue-700 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Sign in</button>
+              <button type="submit" className="defaultButton">Sign in</button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Don’t have an account yet? <Link href="/signup" className="font-medium text-primary-600 hover:underline dark:text-primary-500">Sign up</Link>
               </p>

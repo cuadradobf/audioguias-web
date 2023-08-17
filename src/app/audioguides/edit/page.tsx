@@ -1,5 +1,6 @@
 "use client";
 
+import NewOrEditAudioGuide from '@/app/newOrEditAudioguide';
 import { useSearchParams } from 'next/navigation';
 
 export default function EditAudioGuide() {
@@ -9,6 +10,6 @@ export default function EditAudioGuide() {
     const guideId = searchParams.get('guideId')
 
     return (
-        <div>Editar AudioGuia {guideId}</div>
+        <NewOrEditAudioGuide id={guideId} />
     )
 }

@@ -4,6 +4,7 @@ import { useContext } from "react"
 import { AuthContext } from "./authContext"
 import firebaseApp from "./firebaseService";
 import { getAuth, signOut } from "firebase/auth";
+import Link from "next/link";
 
 export default function Home() {
 
@@ -21,6 +22,7 @@ export default function Home() {
       <section className="hero">
         <h2>Descubre lugares fascinantes con nuestras audio guías</h2>
         <p>Explora destinos turísticos de manera única y envolvente. Crea y comparte tus propias guías.</p>
+        <Link className="defaultButton" href="/download">Descarga nuestra app</Link>
       </section>
 
     </div>
