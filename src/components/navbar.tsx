@@ -23,6 +23,7 @@ export default function NavBar() {
         { id: 2, name: "Mis Audioguías", href: "/audioguides" },
         { id: 3, name: "Crear Audioguía", href: "/audioguides/new" },
         { id: 4, name: "Idioma", href: "#" },
+        { id: 5, name: "Perfil", href: "/profile" },
     ]
 
     const notLoggedRoutes = [

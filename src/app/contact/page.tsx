@@ -51,22 +51,25 @@ export default function Contact() {
         }
     }
     return (
-      <form id="contactForm" onSubmit={handleSubmit}>
-        <h2>Contact us</h2>
-        {error != '' && (<p className="error">Error: {error}</p>)}
-        <div>
-          <label htmlFor="contactName">Name</label>
-          <input type="text" id="contactName" value={name} onChange={(ev) => { setName(ev.target.value) }} required/>
-        </div>
-        <div>
-          <label htmlFor="contactEmail">Email</label>
-          <input type="email" id="contactEmail" onChange={(ev) => { setEmail(ev.target.value) }}  value={email} required/>
-        </div>
-        <p>Enter your question or feedback:</p>
-        <input type="text" id="question" value={question} onChange={(ev) => { setQuestion(ev.target.value) }} required/>
+      <div className="flex flex-col mx-auto">
+        <h2 className="defaultTitle">Contact us</h2>
+          {error != '' && (<p className="error">Error: {error}</p>)}
+        <form className="flex flex-col w-full max-w-lg" id="contactForm" onSubmit={handleSubmit}>
+          <div>
+            <label className="defaulLabel" htmlFor="contactName">Name</label>
+            <input className="defaultInput" type="text" id="contactName" value={name} onChange={(ev) => { setName(ev.target.value) }} required/>
+          </div>
+          <div>
+            <label className="defaultLabel" htmlFor="contactEmail">Email</label>
+            <input className="defaultInput" type="email" id="contactEmail" onChange={(ev) => { setEmail(ev.target.value) }}  value={email} required/>
+          </div>
+          <p>Enter your question or feedback:</p>
+          <input className="defaultInput" type="text" id="question" value={question} onChange={(ev) => { setQuestion(ev.target.value) }} required/>
+        
+          <button className="defaultButton" type="submit">Send</button>
+        </form>
+      </div>
       
-        <button type="submit">Send</button>
-      </form>
     )
   }
   

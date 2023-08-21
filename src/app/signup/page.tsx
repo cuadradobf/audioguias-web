@@ -46,22 +46,22 @@ export default function SignUp() {
     }
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {  
-      event.preventDefault();//Que hace esto?
+      event.preventDefault();
 
-      //const regexPassword = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[.@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$');//TODO: mirar como funciona esto
-      const regexName = new RegExp('^[a-zA-ZÀ-ÿ\u00f1\u00d1]+( [a-zA-ZÀ-ÿ\u00f1\u00d1]+)*$');//TODO: mirar como funciona esto
+      const regexName = new RegExp(/^[a-zA-ZÀ-ÿ\u00f1\u00d1]+( [a-zA-ZÀ-ÿ\u00f1\u00d1]+)*$/);
+      const regex = /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,16}$/;
+      const regexPassword = new RegExp(regex)
 
-
-      if (password !== confirmPassword) {//Porque se usa el !== en vez de !=
+      if (password !== confirmPassword) {
         setError('passwords-not-match');
         return;
       }
-      /*
+      
       if (!regexPassword.test(password)) {
         setError('password-too-weak');
         return;
       }
-      */
+      
       if (!regexName.test(name)) {
         setError('invalid-name');
         return;

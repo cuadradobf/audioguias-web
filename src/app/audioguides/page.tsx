@@ -82,7 +82,7 @@ export default function ListAudioGuides() {
                 {!user && (<p>Debes estar logeado</p>)}
             </div>
 
-            {user && (
+            {user && ( //TODO: mostrar texto si no hay audioguías
                 <ul role="list" className="divide-y divide-gray-100">
                     {audioGuides.map((audioGuide) => (
                         <li key={audioGuide.id}>
