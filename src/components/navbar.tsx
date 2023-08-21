@@ -1,10 +1,10 @@
 "use client";
 
 import { useContext } from "react"
-import { AuthContext } from "./authContext"
+import { AuthContext } from "../contexts/authContext"
 import { getAuth, signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import firebaseApp from "./firebaseService";
+import firebaseApp from "../services/firebaseService";
 import Link from "next/link";
 
 export default function NavBar() {

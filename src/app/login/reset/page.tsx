@@ -1,6 +1,6 @@
 "use client";
 
-import firebaseApp from "@/app/firebaseService";
+import firebaseApp from "@/services/firebaseService";
 import { log } from "console";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { useState } from "react";
@@ -30,12 +30,7 @@ export default function Reset() {
 
             //Control de errores
             switch (errorCode) {
-                case 'auth/invalid-email':
-                    setError('invalid-email');
-                    break;
-                case 'auth/user-not-found':
-                    setError('user-not-found');
-                    break;
+            
                 default:
                     setError(errorMessage);
                     console.log(errorCode);

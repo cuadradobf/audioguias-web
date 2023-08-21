@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, createContext, ReactNode } from "react"
 import { User, getAuth } from "firebase/auth"
-import firebaseApp from "./firebaseService"
+import firebaseApp from "../services/firebaseService"
 
 interface ContextProps {
     user: User | null | undefined

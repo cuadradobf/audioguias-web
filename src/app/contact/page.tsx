@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import firebaseApp from "../firebaseService";
+import firebaseApp from "../../services/firebaseService";
 import { getFirestore, setDoc, doc } from "firebase/firestore";
 
 export default function Contact() {

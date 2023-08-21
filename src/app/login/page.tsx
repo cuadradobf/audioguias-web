@@ -1,7 +1,7 @@
 "use client";
 
 import { UserCredential, getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import firebaseApp from "../firebaseService";
+import firebaseApp from "../../services/firebaseService";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";//se usa redirect  en server y userRouter en client
 import Link from "next/link";

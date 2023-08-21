@@ -1,7 +1,7 @@
 "use client";
 
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
-import firebaseApp from "../firebaseService";
+import firebaseApp from "../../services/firebaseService";
 import { getFirestore, collection, addDoc, doc, setDoc } from "firebase/firestore";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -105,7 +105,7 @@ export default function SignUp() {
     return (
       
         
-        <form className="flex items-center flex-col"  id="registrationForm" onSubmit={handleSubmit}>
+        <form className="flex flex-col items-center justify-center w-full md:w-1/2 lg:w-1/3 mx-auto"  id="registrationForm" onSubmit={handleSubmit}>
           
           <div className="defaultTitle">
                 Registration
@@ -114,7 +114,7 @@ export default function SignUp() {
           {error != '' && (<p className="error">Error: {error}</p>)}
 
           <div className="formDiv">
-            <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+            <div className="p-6 space-y-4">
               <label 
                 className="defaultLabel"
                 htmlFor="regName">

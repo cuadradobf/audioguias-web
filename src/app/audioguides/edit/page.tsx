@@ -1,6 +1,6 @@
 "use client";
 
-import NewOrEditAudioGuide from '@/app/newOrEditAudioguide';
+import NewOrEditAudioGuide from '@/components/newOrEditAudioguide';
 import { useSearchParams } from 'next/navigation';
 
 export default function EditAudioGuide() {

@@ -1,8 +1,8 @@
 "use client";
 
 import { useContext } from "react"
-import { AuthContext } from "./authContext"
-import firebaseApp from "./firebaseService";
+import { AuthContext } from "../contexts/authContext"
+import firebaseApp from "../services/firebaseService";
 import { getAuth, signOut } from "firebase/auth";
 import Link from "next/link";
 

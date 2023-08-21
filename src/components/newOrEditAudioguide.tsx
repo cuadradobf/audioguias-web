@@ -1,18 +1,20 @@
 "use client";
 
-import firebaseApp from "@/app/firebaseService";
-import { AudioGuide } from "@/app/models";
+import firebaseApp from "@/services/firebaseService";
+import { AudioGuide } from "@/models/models";
 import { GeoPoint, addDoc, collection, doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 import { ChangeEvent, useContext, useEffect, useState } from "react";
-import { AuthContext } from "./authContext";
+import { AuthContext } from "../contexts/authContext";
 import { UploadResult, getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import AutocompletePlaces from "./autocompletePlaces";
+import { useRouter } from "next/navigation";
 
 export interface NewOrEditAudioGuideProps {
     id: string | null | undefined
 }
 
 export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
+    //TODO: controlar que un usuario baneado no pueda crear o editar una audioGuia
 
     const isNew: boolean = props.id === null || props === undefined;
     const title: string = isNew ? "Nueva Audioguía" : "Editar Audioguía";
@@ -23,6 +25,7 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
     const storage = getStorage(firebaseApp);
 
     const { user } = useContext(AuthContext);
+    const { push } = useRouter();
 
     const [audioGuide, setAudioGuide] = useState<AudioGuide | null | undefined>(undefined);
     const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
@@ -33,7 +36,7 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
     const [placeId, setPlaceId] = useState<string | null | undefined>(undefined);
 
     const handleInputChange = (
-        event: React.ChangeEvent<HTMLInputElement>
+        event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
     ): void => {
         const { name, value } = event.target;
         setAudioGuide((prevAudioGuide) => ({
@@ -127,10 +130,13 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
     }
 
     useEffect(() => {
-
         if (!isNew) {
             fetchAudioGuide(props.id!)
-                .then((guide) => { setAudioGuide(guide); })
+                .then((guide) => { 
+                    setAudioGuide(guide);
+                    setPoint(guide.location);
+                    setPlaceId(guide.placeId);
+                })
                 .catch(console.error);
 
             getDownloadUrlFirestorage(`images/audioGuides/${props.id}/main.jpg`)
@@ -169,47 +175,33 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
                         <label className="defaultLabel" htmlFor="description">
                             Descripción
                         </label>
-                        <input
-                            //TODO: Cambiar por un textarea
+                        <textarea 
                             className="defaultInput"
-                            type="text"
+                            rows={5}
                             value={audioGuide?.description ?? ""}
                             id="description"
                             name="description"
                             onChange={handleInputChange}
-                            required
-                        />
+                            required>
+
+                        </textarea>
                     
-                        {
-                            //TODO: Cambiar por un select
-                        }
                         <label className="defaultLabel" htmlFor="language">
                             Idioma
                         </label>
-                        <input
-                            className="defaultInput"
-                            type="text"
-                            id="language"
-                            name="language"
-                            value={audioGuide?.language ?? ""}
-                            onChange={handleInputChange}
-                            required
-                        />
                         <div className="relative">
                             <select 
                                 className="defaultInput" 
                                 id="language"
                                 name="language"
-                                //value={audioGuide?.language ?? ""}
-                                //onChange={handleInputChange}
-                                //{audioGuide?.language === "es" && selected}
+                                required
+                                value={audioGuide?.language ?? ""}
+                                onChange={handleInputChange}
                             >
+                                <option value="" disabled>Selecciona un idioma</option>
                                 <option value="es" >Español</option>
                                 <option value="en" >Inglés</option>
                             </select>
-                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                            </div>
                         </div>
                     
                         <label className="defaultLabel" htmlFor="country">
@@ -242,7 +234,8 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
                             Dirección
                         </label>
                         <AutocompletePlaces placeId={audioGuide?.placeId} setPlaceId={setPlaceId} setPoint={setPoint} />
-                    
+                    {/*
+                        //TODO: en caso de implementar el coste hay que cambiar el tipo de dato a number
                         <label className="defaultLabel" htmlFor="cost">
                             Coste
                         </label>
@@ -256,43 +249,46 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
                             onChange={handleInputChange}
                             required
                         />
-                    
+                    */}
                         <label className="defaultLabel" htmlFor="image">
                             Imagen
                         </label>
-                        {!isNew && 
-                            (   
-                                //TODO: darle un tamaño fijo
-                                <img 
-                                    className="object-contain rounded mx-auto my-2 border-2 border-gray-200 shadow-md "
-                                    src={imageUrl} alt="Imagen de la audioGuia" 
-                                />     
-                            )
-                        }
-                        <input type="file" accept=".jpg, .jpeg"
-                            className="defaultInput"
-                            onChange={handleImage}
-                            required={isNew}
-                        />
+                        <div className="defaultInput">
+                            {!isNew && 
+                                (   
+                                    //TODO: darle un tamaño fijo
+                                    <img 
+                                        className="object-contain rounded mx-auto my-2 border-2 border-gray-200 shadow-md "
+                                        src={imageUrl} alt="Imagen de la audioGuia" 
+                                    />     
+                                )
+                            }
+                            <input type="file" accept=".jpg, .jpeg"
+                                onChange={handleImage}
+                                required={isNew}
+                            />
+                        </div>
                     
                         <label className="defaultLabel" htmlFor="audio">
                             Audio
                         </label>
-                        {!isNew && 
-                            (   
-                                //TODO: centrar y darle un margen
-                                <audio 
-                                    className="mx-auto my-2"
-                                    src={audioUrl} 
-                                    controls 
-                                />
-                            )
-                        }
-                        <input type="file" accept=".mp3"
-                            className="defaultInput"
-                            onChange={handleAudio}
-                            required={isNew}
-                        />
+                        <div className="defaultInput">
+                            {!isNew && 
+                                (   
+                                    //TODO: centrar y darle un margen
+                                    <audio 
+                                        className="mx-auto my-2"
+                                        src={audioUrl} 
+                                        controls 
+                                    />
+                                )
+                            }
+                            <input type="file" accept=".mp3"
+                                
+                                onChange={handleAudio}
+                                required={isNew}
+                            />
+                        </div>
                         
                     </div>
                     
