@@ -1,14 +1,13 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { ChangeEvent, MouseEventHandler, useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/contexts/authContext";
 import { useRouter } from "next/navigation";
-import { getDownloadURL, getStorage, ref } from "firebase/storage";
+import { StorageReference, UploadResult, deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import firebaseApp from "@/services/firebaseService";
 import { User } from "@/models/models";
-import { deleteDoc, doc, getDoc, getFirestore } from "firebase/firestore";
-import { AuthCredential, EmailAuthProvider, deleteUser, getAuth, reauthenticateWithCredential, updatePassword } from "firebase/auth";
-import { sign } from "crypto";
+import { deleteDoc, doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
+import { EmailAuthProvider, deleteUser, getAuth, reauthenticateWithCredential, sendEmailVerification, updatePassword, updateProfile } from "firebase/auth";
 
 export default function Profile() {
 
@@ -16,7 +15,7 @@ export default function Profile() {
     const { user } = useContext(AuthContext);
     const [isLoading, setIsLoading] = useState(true);
     const [userInfo, setUserInfo] = useState<User>();
-    const [imageProfileURL, setImageProfileURL] = useState<string>("");
+    const [imageProfileURL, setImageProfileURL] = useState<string>();
     const [actualPassword, setActualPassword] = useState<string>("");
     const [newPassword, setNewPassword] = useState<string>("");
     const [confirmNewPassword, setConfirmNewPassword] = useState<string>("");
@@ -55,9 +54,16 @@ export default function Profile() {
             [name]: value,
         } as User));
     };
-    //TODO: logica para cambiar imagen de perfil o borrarla
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
+
+    const updateAuthName = async () => {
+        await updateProfile(auth.currentUser!, {
+            displayName: userInfo?.name
+        });
+        console.log('Auth name updated successfully');
+    }
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         const regexName = new RegExp(/^[a-zA-ZÀ-ÿ\u00f1\u00d1]+( [a-zA-ZÀ-ÿ\u00f1\u00d1]+)*$/);
@@ -71,16 +77,16 @@ export default function Profile() {
             return;
         }
         try {
-            //TODO: logica para guardar los datos del usuario
+            await setDoc(doc(db, "user", user?.email!), userInfo);
+            await updateAuthName();
+            alert("Datos guardados correctamente");
         } catch (error: any) {
-            const errorCode = error.code;
+            //const errorCode = error.code;
             const errorMessage = error.message;
             console.log(error);
-            switch (errorCode) {
-                default:
-                    setErrorF1(errorMessage.toString());
-                    break;
-            }
+
+            setErrorF1(errorMessage.toString());
+
         }
     };
 
@@ -117,9 +123,6 @@ export default function Profile() {
                 case "auth/wrong-password":
                     setErrorF2("wrong-password");
                     break;
-                case "auth/weak-password":
-                    setErrorF2("weak-password");
-                    break;
                 default:
                     setErrorF2(errorMessage.toString());
                     break;
@@ -136,6 +139,11 @@ export default function Profile() {
 
         try {
             await reauthenticateWithCredential(user!, EmailAuthProvider.credential(user!.email!, actualPw))
+
+            if (!decodeURIComponent(imageProfileURL!).includes("images/default/profile.png")) {
+                await deleteImageProfile()
+            }
+
             await deleteUser(user!)
             await deleteDoc(doc(db, "user", user?.email!))
 
@@ -159,6 +167,35 @@ export default function Profile() {
         }
     }
 
+    const uploadFile = async (path: string, file: File): Promise<UploadResult> => {
+        const storageRef = ref(storage, path);
+
+        return await uploadBytes(storageRef, file)
+    }
+
+
+    const handleImageUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files && event.target.files.length > 0) {
+            const file = event.target.files[0];
+            const result: UploadResult = await uploadFile(`images/${user?.email}/profile`, file);
+            const url = await getImageURL(result.ref.fullPath);
+            setImageProfileURL(url);
+
+            // reset input value
+            event.target.value = '';
+        }
+    }
+
+    const deleteImageProfile = async () => {
+        const refImage: StorageReference = ref(storage, `images/${user?.email}/profile`);
+        await deleteObject(refImage);
+    }
+
+    const handleVerification = async () => {
+        await sendEmailVerification(user!);
+        alert("Email de verificación enviado");
+    }
+
     useEffect(() => {
         if (!user) {
             push('/login');
@@ -174,11 +211,11 @@ export default function Profile() {
                     }
                 );
         }
-    }, []);
+    }, [user]);
 
     return (
         <>
-            {isLoading == false &&
+            {isLoading == false && user?.emailVerified &&
                 (
                     <div className="flex flex-col mx-auto">
                         <div className="defaultTitle">
@@ -186,11 +223,25 @@ export default function Profile() {
                         </div>
                         <div className="flex flex-col w-full max-w-lg">
                             <img
-                                className="object-contain rounded mx-auto my-2 border-2 border-gray-200 shadow-md "
+                                className="object-content rounded-full mx-auto my-2 border-2 border-gray-200 shadow-md "
                                 src={imageProfileURL} alt="Imagen del perfil"
+                                style={{ width: '50%', aspectRatio: '1/1' }}
                             />
 
-                            <br />  
+                            <input type="file" accept=".jpg, .jpeg"
+                                onChange={handleImageUpload}
+                            />
+
+                            <br />
+                            {!decodeURIComponent(imageProfileURL!).includes("images/default/profile.png") &&
+                                (<button className="redButton" onClick={async () => {
+                                    await deleteImageProfile();
+                                    const urlDefault = await getImageURL(`images/default/profile.png`);
+                                    setImageProfileURL(urlDefault);
+                                }}>Eliminar</button>)
+                            }
+
+                            <br />
                             <br />
 
                             <p>{user?.email}</p>
@@ -201,7 +252,7 @@ export default function Profile() {
                             <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
                                 {errorF1 != '' && (<p className="error">Error: {errorF1}</p>)}
                                 <div>
-                                <div className="defaultTitle">Edit name or surname</div>
+                                    <div className="defaultTitle">Edit name or surname</div>
 
                                     <label htmlFor="name" className="defaultLabel">Name</label>
                                     <input
@@ -230,42 +281,42 @@ export default function Profile() {
 
                             <br />
                             <hr />
-                            
+
                             <div className="defaultTitle">Change password</div>
                             {errorF2 != '' && (<p className="error">Error: {errorF2}</p>)}
 
                             <form className="space-y-4 md:space-y-6" onSubmit={handleSubmitChangePassword}>
-                                <label 
-                                    htmlFor="actualPassword" 
+                                <label
+                                    htmlFor="actualPassword"
                                     className="defaultLabel">
-                                        Actual password
+                                    Actual password
                                 </label>
-                                <input 
-                                    type="password" 
-                                    placeholder="••••••••" 
-                                    className="defaultInput" 
+                                <input
+                                    type="password"
+                                    placeholder="••••••••"
+                                    className="defaultInput"
                                     required
                                     onChange={(ev) => { setActualPassword(ev.target.value) }} />
-                                <label 
-                                    htmlFor="actualPassword" 
+                                <label
+                                    htmlFor="actualPassword"
                                     className="defaultLabel">
-                                        New password
+                                    New password
                                 </label>
-                                <input 
-                                    type="password" 
-                                    placeholder="••••••••" 
-                                    className="defaultInput" 
+                                <input
+                                    type="password"
+                                    placeholder="••••••••"
+                                    className="defaultInput"
                                     required
                                     onChange={(ev) => { setNewPassword(ev.target.value) }} />
-                                <label 
-                                    htmlFor="actualPassword" 
+                                <label
+                                    htmlFor="actualPassword"
                                     className="defaultLabel">
-                                        Confirm new password
+                                    Confirm new password
                                 </label>
-                                <input 
-                                    type="password" 
-                                    placeholder="••••••••" 
-                                    className="defaultInput" 
+                                <input
+                                    type="password"
+                                    placeholder="••••••••"
+                                    className="defaultInput"
                                     required
                                     onChange={(ev) => { setConfirmNewPassword(ev.target.value) }} />
 
@@ -274,7 +325,7 @@ export default function Profile() {
 
                             <br />
                             <hr />
-                            
+
                             <div className="defaultTitle">Delete account</div>
 
                             <button className="redButton" onClick={handleDeleteAccount}>Delete</button>
@@ -282,6 +333,24 @@ export default function Profile() {
                     </div>
                 )
             }
+
+            {isLoading == false && !user?.emailVerified &&
+                (
+                    <>
+                        <div className="flex flex-col mx-auto w-full max-w-lg">
+                            <div className="defaultTitle">Verify account</div>
+                            <p>In order to access all the functionalities of the application, it is necessary to verify the account. Send an email verification:</p>
+                            <button className="defaultButton" onClick={handleVerification}>Send</button>
+                            <br />
+                            <hr />
+
+                            <div className="defaultTitle">Delete account</div>
+                            <button className="redButton" onClick={handleDeleteAccount}>Delete</button>
+                        </div>
+                    </>
+                )
+            }
+
         </>
     );
 }

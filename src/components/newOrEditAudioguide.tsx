@@ -1,20 +1,22 @@
 "use client";
 
 import firebaseApp from "@/services/firebaseService";
-import { AudioGuide } from "@/models/models";
+import { AudioGuide, User } from "@/models/models";
 import { GeoPoint, addDoc, collection, doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { AuthContext } from "../contexts/authContext";
 import { UploadResult, getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import AutocompletePlaces from "./autocompletePlaces";
 import { useRouter } from "next/navigation";
+import { sendEmailVerification } from "firebase/auth";
+import Link from "next/link";
 
 export interface NewOrEditAudioGuideProps {
     id: string | null | undefined
 }
 
 export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
-    //TODO: controlar que un usuario baneado no pueda crear o editar una audioGuia
+    
 
     const isNew: boolean = props.id === null || props === undefined;
     const title: string = isNew ? "Nueva Audioguía" : "Editar Audioguía";
@@ -27,6 +29,7 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
     const { user } = useContext(AuthContext);
     const { push } = useRouter();
 
+    const [userInfo, setUserInfo] = useState<User>();
     const [audioGuide, setAudioGuide] = useState<AudioGuide | null | undefined>(undefined);
     const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
     const [audioUrl, setAudioUrl] = useState<string | undefined>(undefined);
@@ -44,6 +47,20 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
             [name]: value,
         } as AudioGuide));
     };
+
+    const fetchUser = async (email: string): Promise<User> => {
+        const docRef = doc(db, "user", email);
+        const docSnap = await getDoc(docRef);
+
+        
+
+        if (docSnap.exists()) {
+            const u = docSnap.data() as User;
+            return u;
+        } else {
+            throw new Error("No such document!");
+        }
+    }
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -64,10 +81,12 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
                 console.log("Document written with ID: ", docRef.id);
                 await uploadFile(`images/audioGuides/${docRef.id}/main.jpg`, image!);
                 await uploadFile(`audios/audioGuides/${docRef.id}/audio.mp3`, audio!);
+                push(`/audioguides`);
             }
             else {
                 await setDoc(doc(db, "audioGuide", props.id!), audioGuide);
                 console.log("Document updated with ID: ", props.id);
+                push(`/audioguides`);
             }
         } catch (err: any) {
             console.error("Error adding or editing document: ", err);
@@ -104,6 +123,11 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
         }
     }
 
+    const handleVerification = async () => {
+        await sendEmailVerification(user!);
+        alert("Email de verificación enviado");
+    }
+
     const getDownloadUrlFirestorage = async (path: string): Promise<string> => {
         const url = await getDownloadURL(ref(storage, path));
         return url;
@@ -130,179 +154,210 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
     }
 
     useEffect(() => {
-        if (!isNew) {
-            fetchAudioGuide(props.id!)
-                .then((guide) => { 
-                    setAudioGuide(guide);
-                    setPoint(guide.location);
-                    setPlaceId(guide.placeId);
-                })
-                .catch(console.error);
+        if (user) {
+            fetchUser(user.email!).then(u => { setUserInfo(u) }).catch(console.error);
+        
+            if (!isNew) {
+                fetchAudioGuide(props.id!)
+                    .then((guide) => { 
+                        setAudioGuide(guide);
+                        setPoint(guide.location);
+                        setPlaceId(guide.placeId);
+                    })
+                    .catch(console.error);
 
-            getDownloadUrlFirestorage(`images/audioGuides/${props.id}/main.jpg`)
-                .then((url) => { setImageUrl(url); })
-                .catch(console.error);
+                getDownloadUrlFirestorage(`images/audioGuides/${props.id}/main.jpg`)
+                    .then((url) => { setImageUrl(url); })
+                    .catch(console.error);
 
-            getDownloadUrlFirestorage(`audios/audioGuides/${props.id}/audio.mp3`)
-                .then((url) => { setAudioUrl(url); })
-                .catch(console.error);
+                getDownloadUrlFirestorage(`audios/audioGuides/${props.id}/audio.mp3`)
+                    .then((url) => { setAudioUrl(url); })
+                    .catch(console.error);
+            }
         }
     }, []);
 
     return (
-        <div className="flex flex-col">
 
-            <div className="defaultTitle">    
-                {title}  
-            </div>
-            {error != '' && (<p className="error">Error: {error}</p>)}
-            <form className="flex flex-col w-full max-w-lg" onSubmit={handleSubmit}>
-                <div className="flex flex-wrap -mx-3 mb-6">
-                    <div className="w-full px-3">
-                        <label className="defaultLabel" htmlFor="title">
-                            Título
-                        </label>
-                        <input
-                            className="defaultInput"
-                            type="text"
-                            id="title"
-                            name="title"
-                            value={audioGuide?.title ?? ""}
-                            onChange={handleInputChange}
-                            required
-                        />
-                    
-                        <label className="defaultLabel" htmlFor="description">
-                            Descripción
-                        </label>
-                        <textarea 
-                            className="defaultInput"
-                            rows={5}
-                            value={audioGuide?.description ?? ""}
-                            id="description"
-                            name="description"
-                            onChange={handleInputChange}
-                            required>
+        <>  {user?.emailVerified && userInfo?.banned == false &&
+            (     
+                <div className="flex flex-col">
 
-                        </textarea>
-                    
-                        <label className="defaultLabel" htmlFor="language">
-                            Idioma
-                        </label>
-                        <div className="relative">
-                            <select 
-                                className="defaultInput" 
-                                id="language"
-                                name="language"
-                                required
-                                value={audioGuide?.language ?? ""}
-                                onChange={handleInputChange}
-                            >
-                                <option value="" disabled>Selecciona un idioma</option>
-                                <option value="es" >Español</option>
-                                <option value="en" >Inglés</option>
-                            </select>
-                        </div>
-                    
-                        <label className="defaultLabel" htmlFor="country">
-                            País
-                        </label>
-                        <input
-                            className="defaultInput"
-                            type="text"
-                            id="country"
-                            name="country"
-                            value={audioGuide?.country ?? ""}
-                            onChange={handleInputChange}
-                            required
-                        />
-                    
-                        <label className="defaultLabel" htmlFor="city">
-                            Ciudad
-                        </label>
-                        <input
-                            className="defaultInput"
-                            type="text"
-                            id="city"
-                            name="city"
-                            value={audioGuide?.city ?? ""}
-                            onChange={handleInputChange}
-                            required
-                        />
-
-                        <label className="defaultLabel" htmlFor="location">
-                            Dirección
-                        </label>
-                        <AutocompletePlaces placeId={audioGuide?.placeId} setPlaceId={setPlaceId} setPoint={setPoint} />
-                    {/*
-                        //TODO: en caso de implementar el coste hay que cambiar el tipo de dato a number
-                        <label className="defaultLabel" htmlFor="cost">
-                            Coste
-                        </label>
-                        <input
-                            className="defaultInput"
-                            type="float"
-                            min="0"
-                            id="cost"
-                            name="cost"
-                            value={audioGuide?.cost ?? 0}
-                            onChange={handleInputChange}
-                            required
-                        />
-                    */}
-                        <label className="defaultLabel" htmlFor="image">
-                            Imagen
-                        </label>
-                        <div className="defaultInput">
-                            {!isNew && 
-                                (   
-                                    //TODO: darle un tamaño fijo
-                                    <img 
-                                        className="object-contain rounded mx-auto my-2 border-2 border-gray-200 shadow-md "
-                                        src={imageUrl} alt="Imagen de la audioGuia" 
-                                    />     
-                                )
-                            }
-                            <input type="file" accept=".jpg, .jpeg"
-                                onChange={handleImage}
-                                required={isNew}
-                            />
-                        </div>
-                    
-                        <label className="defaultLabel" htmlFor="audio">
-                            Audio
-                        </label>
-                        <div className="defaultInput">
-                            {!isNew && 
-                                (   
-                                    //TODO: centrar y darle un margen
-                                    <audio 
-                                        className="mx-auto my-2"
-                                        src={audioUrl} 
-                                        controls 
-                                    />
-                                )
-                            }
-                            <input type="file" accept=".mp3"
-                                
-                                onChange={handleAudio}
-                                required={isNew}
-                            />
-                        </div>
-                        
+                    <div className="defaultTitle">    
+                        {title}  
                     </div>
-                    
-                </div>
-                <div className="md:flex md:items-center">
-                    <button 
-                        className="defaultButton" 
-                        type="submit">
-                            {submitButtonText}
-                    </button>
-                </div>
+                    {error != '' && (<p className="error">Error: {error}</p>)}
+                    <form className="flex flex-col w-full max-w-lg" onSubmit={handleSubmit}>
+                        <div className="flex flex-wrap -mx-3 mb-6">
+                            <div className="w-full px-3">
+                                <label className="defaultLabel" htmlFor="title">
+                                    Título
+                                </label>
+                                <input
+                                    className="defaultInput"
+                                    type="text"
+                                    id="title"
+                                    name="title"
+                                    value={audioGuide?.title ?? ""}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            
+                                <label className="defaultLabel" htmlFor="description">
+                                    Descripción
+                                </label>
+                                <textarea 
+                                    className="defaultInput"
+                                    rows={5}
+                                    value={audioGuide?.description ?? ""}
+                                    id="description"
+                                    name="description"
+                                    onChange={handleInputChange}
+                                    required>
 
-                
-            </form>
-        </div>
+                                </textarea>
+                            
+                                <label className="defaultLabel" htmlFor="language">
+                                    Idioma
+                                </label>
+                                <div className="relative">
+                                    <select 
+                                        className="defaultInput" 
+                                        id="language"
+                                        name="language"
+                                        required
+                                        value={audioGuide?.language ?? ""}
+                                        onChange={handleInputChange}
+                                    >
+                                        <option value="" disabled>Selecciona un idioma</option>
+                                        <option value="es" >Español</option>
+                                        <option value="en" >Inglés</option>
+                                    </select>
+                                </div>
+                            
+                                <label className="defaultLabel" htmlFor="country">
+                                    País
+                                </label>
+                                <input
+                                    className="defaultInput"
+                                    type="text"
+                                    id="country"
+                                    name="country"
+                                    value={audioGuide?.country ?? ""}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            
+                                <label className="defaultLabel" htmlFor="city">
+                                    Ciudad
+                                </label>
+                                <input
+                                    className="defaultInput"
+                                    type="text"
+                                    id="city"
+                                    name="city"
+                                    value={audioGuide?.city ?? ""}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+
+                                <label className="defaultLabel" htmlFor="location">
+                                    Dirección
+                                </label>
+                                <AutocompletePlaces placeId={audioGuide?.placeId} setPlaceId={setPlaceId} setPoint={setPoint} />
+                            {/*
+                                //TODO: en caso de implementar el coste hay que cambiar el tipo de dato a number
+                                <label className="defaultLabel" htmlFor="cost">
+                                    Coste
+                                </label>
+                                <input
+                                    className="defaultInput"
+                                    type="float"
+                                    min="0"
+                                    id="cost"
+                                    name="cost"
+                                    value={audioGuide?.cost ?? 0}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            */}
+                                <label className="defaultLabel" htmlFor="image">
+                                    Imagen
+                                </label>
+                                <div className="defaultInput">
+                                    {!isNew && 
+                                        (   
+                                            //TODO: darle un tamaño fijo
+                                            <img 
+                                                className="object-contain rounded mx-auto my-2 border-2 border-gray-200 shadow-md "
+                                                src={imageUrl} alt="Imagen de la audioGuia"   
+                                            />     
+                                        )
+                                    }
+                                    <input type="file" accept=".jpg, .jpeg"
+                                        onChange={handleImage}
+                                        required={isNew}
+                                    />
+                                </div>
+                            
+                                <label className="defaultLabel" htmlFor="audio">
+                                    Audio
+                                </label>
+                                <div className="defaultInput">
+                                    {!isNew && 
+                                        (   
+                                            //TODO: centrar y darle un margen
+                                            <audio 
+                                                className="mx-auto my-2"
+                                                src={audioUrl} 
+                                                controls 
+                                            />
+                                        )
+                                    }
+                                    <input type="file" accept=".mp3"
+                                        
+                                        onChange={handleAudio}
+                                        required={isNew}
+                                    />
+                                </div>
+                                
+                            </div>
+                            
+                        </div>
+                        <div className="md:flex md:items-center">
+                            <button 
+                                className="defaultButton" 
+                                type="submit">
+                                    {submitButtonText}
+                            </button>
+                        </div>
+
+                        
+                    </form>
+                </div>
+            )}
+            {!user?.emailVerified && userInfo?.banned == false &&
+                (
+                    <>
+                        <div className="flex flex-col mx-auto w-full max-w-lg">
+                            <div className="defaultTitle">Verify account</div>
+                            <p>In order to access all the functionalities of the application, it is necessary to verify the account. Send an email verification:</p>
+                            <button className="defaultButton" onClick={handleVerification}>Send</button>
+                        </div>
+                    </>
+                )
+            }
+            {userInfo?.banned == true &&
+                (
+                    <>
+                        <div className="flex flex-col mx-auto w-full max-w-lg">
+                            <div className="defaultTitle">Banned account</div>
+                            <p>Your account has been banned by an administrator. To find out the reasons, please contact us.</p>
+                            <Link className="defaultButton" href="/contact">Contact us</Link>
+                        </div>
+                    </>
+                )
+            }
+        </> 
     );
 }

@@ -16,7 +16,7 @@ export default function NewAudioGuide() {
         if (!user) {
             push('/login');
         }
-    }, []);
+    }, [user]);
 
     return (
         <NewOrEditAudioGuide id={null} />

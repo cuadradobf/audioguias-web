@@ -1,17 +1,20 @@
 "use client";
 
-import { useContext } from "react"
+import { useContext, useEffect, useState } from "react"
 import { AuthContext } from "../contexts/authContext"
 import { getAuth, signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import firebaseApp from "../services/firebaseService";
 import Link from "next/link";
+import { getDownloadURL, getStorage, ref } from "firebase/storage";
 
 export default function NavBar() {
 
     const { user } = useContext(AuthContext)
     const auth = getAuth(firebaseApp);
+    const storageNavBar = getStorage(firebaseApp);
     const router = useRouter();
+    const [imageProfileURL, setImageProfileURL] = useState<string>();
 
     const logout = () => {
         signOut(auth);
@@ -29,7 +32,23 @@ export default function NavBar() {
     const notLoggedRoutes = [
         { id: 1, name: "Home", href: "/" },
     ]
-
+    
+    const getImageURLNavBar = async (path: string): Promise<string> => {
+        return await getDownloadURL(ref(storageNavBar, path));
+    }
+    useEffect(() => {
+        if (user) {
+            getImageURLNavBar(`images/${user.email}/profile`)
+                .then(url => { setImageProfileURL(url) })
+                    .catch(
+                        (error) => {
+                            getImageURLNavBar(`images/default/profile.png`)
+                                .then(urlDefault => { setImageProfileURL(urlDefault) })
+                        }
+                    );
+        }
+    }, [user]);
+    
     return (
         <nav className="bg-gray-800">
             <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -61,7 +80,14 @@ export default function NavBar() {
                             
                                 {!!user
                                 //TODO: colocar a la derecha
-                                    ? <button className="text-white bg-red-900 hover:bg-red-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium" onClick={logout}>Logout</button>
+                                    ? <div  className="flex space-x-4">
+                                        <img
+                                            className="h-8 w-8 rounded-full"
+                                            src={imageProfileURL} alt="Imagen del perfil"
+                                            
+                                        />
+                                       <button className="text-white bg-red-900 hover:bg-red-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium" onClick={logout}>Logout</button>
+                                    </div>
                                     : <div  className="flex space-x-4">
                                         <Link href="/login" className="text-white bg-blue-900 hover:bg-blue-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Login</Link>
                                         <Link href="/signup" className="text-white bg-purple-900 hover:bg-purple-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Signup</Link>
@@ -80,7 +106,14 @@ export default function NavBar() {
                     }
 
                     {!!user
-                        ? <button onClick={logout}>Logout</button>
+                        ? <div  className="flex flex-col space-y-1 px-2 pb-3 pt-2">
+                            <img
+                                className="h-8 w-8 rounded-full"
+                                src={imageProfileURL} alt="Imagen del perfil"
+                                
+                            />
+                            <button className="text-white bg-red-900 hover:bg-red-700 hover:text-white rounded-md px-3 py-2 block text-sm font-medium" onClick={logout}>Logout</button>
+                        </div>
                         : <div className="flex flex-col space-y-1 px-2 pb-3 pt-2">
                             <Link href="/login" className="text-white bg-blue-900 hover:bg-blue-700 hover:text-white rounded-md px-3 py-2 block text-sm font-medium">Login</Link>
                             <Link href="/signup" className="text-white bg-red-900 hover:bg-red-700 hover:text-white rounded-md px-3 py-2 block text-sm font-medium">Signup</Link>
