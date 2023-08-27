@@ -5,6 +5,8 @@ import { AuthProvider } from '../contexts/authContext'
 import NavBar from '../components/navbar'
 import Footer from '../components/footer'
 
+import i18n from '@/i18n'
+
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {

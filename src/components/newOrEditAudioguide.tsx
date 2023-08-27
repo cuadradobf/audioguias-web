@@ -52,8 +52,6 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
         const docRef = doc(db, "user", email);
         const docSnap = await getDoc(docRef);
 
-        
-
         if (docSnap.exists()) {
             const u = docSnap.data() as User;
             return u;

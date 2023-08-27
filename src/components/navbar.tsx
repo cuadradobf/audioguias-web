@@ -7,14 +7,15 @@ import { useRouter } from "next/navigation";
 import firebaseApp from "../services/firebaseService";
 import Link from "next/link";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
+import { useProfileImageURL } from "@/hooks/useProfileImageURL";
 
 export default function NavBar() {
 
     const { user } = useContext(AuthContext)
+    const imageProfileURL = useProfileImageURL();
     const auth = getAuth(firebaseApp);
     const storageNavBar = getStorage(firebaseApp);
     const router = useRouter();
-    const [imageProfileURL, setImageProfileURL] = useState<string>();
 
     const logout = () => {
         signOut(auth);
@@ -32,23 +33,30 @@ export default function NavBar() {
     const notLoggedRoutes = [
         { id: 1, name: "Home", href: "/" },
     ]
-    
+
     const getImageURLNavBar = async (path: string): Promise<string> => {
         return await getDownloadURL(ref(storageNavBar, path));
     }
+
+    /*
     useEffect(() => {
         if (user) {
             getImageURLNavBar(`images/${user.email}/profile`)
-                .then(url => { setImageProfileURL(url) })
-                    .catch(
-                        (error) => {
-                            getImageURLNavBar(`images/default/profile.png`)
-                                .then(urlDefault => { setImageProfileURL(urlDefault) })
-                        }
-                    );
+                .then(url => {
+                    setImageProfileURL(url);
+                })
+                .catch(
+                    (error) => {
+                        getImageURLNavBar(`images/default/profile.png`)
+                            .then(urlDefault => {
+                                setImageProfileURL(urlDefault);
+                            })
+                    }
+                );
         }
     }, [user]);
-    
+    */
+
     return (
         <nav className="bg-gray-800">
             <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -72,23 +80,19 @@ export default function NavBar() {
                             <img className="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company" />
                         </div>
                         <div className="hidden sm:ml-6 sm:block">
-                            <div  className="flex space-x-4">
+                            <div className="flex space-x-4">
                                 {!!user
                                     ? loggedRoutes.map((route) => (<Link key={route.id} href={route.href} className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">{route.name}</Link>))
                                     : notLoggedRoutes.map((route) => (<Link key={route.id} href={route.href} className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">{route.name}</Link>))
                                 }
-                            
+
                                 {!!user
-                                //TODO: colocar a la derecha
-                                    ? <div  className="flex space-x-4">
-                                        <img
-                                            className="h-8 w-8 rounded-full"
-                                            src={imageProfileURL} alt="Imagen del perfil"
-                                            
-                                        />
-                                       <button className="text-white bg-red-900 hover:bg-red-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium" onClick={logout}>Logout</button>
+                                    //TODO: colocar a la derecha
+                                    ? <div className="flex space-x-4">
+                                        <img className="h-8 w-8 rounded-full" src={imageProfileURL} alt="Imagen del perfil"></img>;
+                                        <button className="text-white bg-red-900 hover:bg-red-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium" onClick={logout}>Logout</button>
                                     </div>
-                                    : <div  className="flex space-x-4">
+                                    : <div className="flex space-x-4">
                                         <Link href="/login" className="text-white bg-blue-900 hover:bg-blue-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Login</Link>
                                         <Link href="/signup" className="text-white bg-purple-900 hover:bg-purple-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Signup</Link>
                                     </div>
@@ -106,12 +110,8 @@ export default function NavBar() {
                     }
 
                     {!!user
-                        ? <div  className="flex flex-col space-y-1 px-2 pb-3 pt-2">
-                            <img
-                                className="h-8 w-8 rounded-full"
-                                src={imageProfileURL} alt="Imagen del perfil"
-                                
-                            />
+                        ? <div className="flex flex-col space-y-1 px-2 pb-3 pt-2">
+                            <img className="h-8 w-8 rounded-full" src={imageProfileURL} alt="Imagen del perfil"></img>;
                             <button className="text-white bg-red-900 hover:bg-red-700 hover:text-white rounded-md px-3 py-2 block text-sm font-medium" onClick={logout}>Logout</button>
                         </div>
                         : <div className="flex flex-col space-y-1 px-2 pb-3 pt-2">

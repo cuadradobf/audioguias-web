@@ -8,6 +8,7 @@ import firebaseApp from "@/services/firebaseService";
 import { User } from "@/models/models";
 import { deleteDoc, doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 import { EmailAuthProvider, deleteUser, getAuth, reauthenticateWithCredential, sendEmailVerification, updatePassword, updateProfile } from "firebase/auth";
+import { ProfileImageChangedEventDetail } from "@/events/profileImageChanged";
 
 export default function Profile() {
 
@@ -183,6 +184,9 @@ export default function Profile() {
 
             // reset input value
             event.target.value = '';
+
+            const ev = new CustomEvent("profileImageChanged", { detail: { url: url } as ProfileImageChangedEventDetail });
+            window.dispatchEvent(ev);
         }
     }
 
@@ -203,11 +207,19 @@ export default function Profile() {
         else {
             fetchUser(user.email!).then(u => { setUserInfo(u) }).catch(console.error);
             getImageURL(`images/${user.email}/profile`)
-                .then(url => { setImageProfileURL(url) })
+                .then(url => {
+                    setImageProfileURL(url);
+                    const ev = new CustomEvent("profileImageChanged", { detail: { url: url } as ProfileImageChangedEventDetail });
+                    window.dispatchEvent(ev);
+                })
                 .catch(
                     (error) => {
                         getImageURL(`images/default/profile.png`)
-                            .then(urlDefault => { setImageProfileURL(urlDefault) })
+                            .then(urlDefault => {
+                                setImageProfileURL(urlDefault);
+                                const ev = new CustomEvent("profileImageChanged", { detail: { url: urlDefault } as ProfileImageChangedEventDetail });
+                                window.dispatchEvent(ev);
+                            })
                     }
                 );
         }
@@ -238,6 +250,8 @@ export default function Profile() {
                                     await deleteImageProfile();
                                     const urlDefault = await getImageURL(`images/default/profile.png`);
                                     setImageProfileURL(urlDefault);
+                                    const ev = new CustomEvent("profileImageChanged", { detail: { url: urlDefault } as ProfileImageChangedEventDetail });
+                                    window.dispatchEvent(ev);
                                 }}>Eliminar</button>)
                             }
 

@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";//se usa redirect  en server y userR
 import Link from "next/link";
 
 export default function Login() {
+
   const auth = getAuth(firebaseApp);
 
   const [email, setEmail] = useState('');
@@ -44,6 +45,7 @@ export default function Login() {
     }
 
   }
+
 
 
   return (

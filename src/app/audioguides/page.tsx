@@ -2,11 +2,11 @@
 
 import { getAuth } from "firebase/auth";
 import firebaseApp from "../../services/firebaseService";
-import { collection, query, where, getDocs, getFirestore, deleteDoc, doc } from "firebase/firestore";
+import { collection, query, where, getDocs, getFirestore, deleteDoc, doc, getDoc } from "firebase/firestore";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../contexts/authContext";
 import Link from "next/link";
-import { AudioGuide, Comment } from "../../models/models";
+import { AudioGuide, Comment, User } from "../../models/models";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { useRouter } from "next/navigation";
 
@@ -19,8 +19,10 @@ export default function ListAudioGuides() {
     const storage = getStorage(firebaseApp);
 
     const [audioGuides, setAudioGuides] = useState(new Array<{ id: string, data: AudioGuide, imageUrl: string, rating: number }>());
+    const [filteredAudioGuides, setFilteredAudioGuides] = useState(new Array<{ id: string, data: AudioGuide, imageUrl: string, rating: number }>());
+
     const { push } = useRouter();
-    
+
     const deleteAudioguide = async (id: string) => {
         try {
             await deleteDoc(doc(db, "audioGuide", id));
@@ -29,9 +31,23 @@ export default function ListAudioGuides() {
             alert(err);
         }
     }
+
+    const fetchUser = async (email: string): Promise<User> => {
+        const docRef = doc(db, "user", email);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            const u = docSnap.data() as User;
+            return u;
+        } else {
+            throw new Error("No such document!");
+        }
+    }
+
     const fetchData = async () => {
+        const loggedUser = await fetchUser(auth.currentUser?.email!);
         const data = new Array<{ id: string, data: AudioGuide, imageUrl: string, rating: number }>();
-        const q = query(collection(db, "audioGuide"), where("user", "==", auth.currentUser?.email));
+        let q = loggedUser.rol == "Admin" ? query(collection(db, "audioGuide")) : query(collection(db, "audioGuide"), where("user", "==", auth.currentUser?.email));
         const querySnapshot = await getDocs(q);
 
         for (const doc of querySnapshot.docs) {
@@ -45,8 +61,9 @@ export default function ListAudioGuides() {
 
             data.push(obj);
         }
-        
+
         setAudioGuides(data);
+        setFilteredAudioGuides(data);
     }
 
     const getAverageRating = async (id: string): Promise<number> => {
@@ -54,7 +71,7 @@ export default function ListAudioGuides() {
         const q = query(collection(db, "audioGuide", id, "comments"));
         const querySnapshot = await getDocs(q);
         for (const doc of querySnapshot.docs) {
-            let comment : Comment = doc.data() as Comment;
+            let comment: Comment = doc.data() as Comment;
             total += comment.valoration;
         }
 
@@ -83,25 +100,49 @@ export default function ListAudioGuides() {
             </div>
 
             {user && ( //TODO: mostrar texto si no hay audioguías
-                <ul role="list" className="divide-y divide-gray-100">
-                    {audioGuides.map((audioGuide) => (
-                        <li key={audioGuide.id}>
-                            <Link href={`/audioguides/edit?guideId=${audioGuide.id}`} className="flex justify-between gap-x-6 py-5">
-                                <div className="flex min-w-0 gap-x-4">
-                                    <img className="h-12 w-12 flex-none rounded-full bg-gray-50" src={audioGuide.imageUrl} alt="" />
-                                    <div className="min-w-0 flex-auto">
-                                        <p className="text-sm font-semibold leading-6 text-gray-900">{audioGuide.data.title}</p>
-                                        <p className="mt-1 truncate text-xs leading-5 text-gray-500">{audioGuide.data.description}</p>
+                <div className="flex flex-col">
+                    <input type="text" placeholder="Buscar audioguía por titulo, ciudad o pais..." onChange={(e) => {
+                        const text = e.target.value;
+                        if (text.trim().length == 0) {
+                            setFilteredAudioGuides(audioGuides);
+                        }
+                        else {
+                            const filtered = audioGuides.filter((audioGuide) => {
+                                return audioGuide.data.title.toLowerCase().includes(text.toLowerCase()) ||
+                                    audioGuide.data.city.toLowerCase().includes(text.toLowerCase()) || 
+                                    audioGuide.data.country.toLowerCase().includes(text.toLowerCase());
+                            });
+                            setFilteredAudioGuides(filtered);
+                        }
+                    }} />
+
+                    { filteredAudioGuides.length == 0 && (<p>No hay resultados</p>) }
+
+                    <ul role="list" className="divide-y divide-gray-100">
+                        {filteredAudioGuides.map((audioGuide) => (
+                            <li key={audioGuide.id} className="flex justify-between gap-x-6 py-5">
+                                <Link href={`/audioguides/edit?guideId=${audioGuide.id}`} className="flex justify-between">
+                                    <div className="flex min-w-0 gap-x-4">
+                                        <img className="h-12 w-12 flex-none rounded-full bg-gray-50" src={audioGuide.imageUrl} alt="" />
+                                        <div className="min-w-0 flex-auto">
+                                            <p className="text-sm font-semibold leading-6 text-gray-900">{audioGuide.data.title}</p>
+                                            <p className="mt-1 truncate text-xs leading-5 text-gray-500">{audioGuide.data.description}</p>
+                                        </div>
                                     </div>
-                                </div>
+                                </Link>
                                 <div className="shrink-0 sm:flex sm:flex-col sm:items-end">
                                     {audioGuide.rating} of 5
-                                    <button className="redButton" onClick={() => { deleteAudioguide(audioGuide.id) }}>Eliminar</button>
+                                    <button className="redButton" onClick={() => {
+                                        const wantToDelete = confirm("¿Estás seguro de que quieres eliminar esta audioguía?")
+                                        if (wantToDelete) {
+                                            deleteAudioguide(audioGuide.id)
+                                        }
+                                    }}>Eliminar</button>
                                 </div>
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
             )}
         </>
     )

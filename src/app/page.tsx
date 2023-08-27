@@ -5,6 +5,7 @@ import { AuthContext } from "../contexts/authContext"
 import firebaseApp from "../services/firebaseService";
 import { getAuth, signOut } from "firebase/auth";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 
 export default function Home() {
 
