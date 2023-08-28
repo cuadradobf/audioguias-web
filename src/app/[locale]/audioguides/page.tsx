@@ -1,14 +1,14 @@
 "use client";
 
 import { getAuth } from "firebase/auth";
-import firebaseApp from "../../services/firebaseService";
+import firebaseApp from "@/services/firebaseService";
 import { collection, query, where, getDocs, getFirestore, deleteDoc, doc, getDoc } from "firebase/firestore";
 import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../contexts/authContext";
-import Link from "next/link";
-import { AudioGuide, Comment, User } from "../../models/models";
+import { AuthContext } from "@/contexts/authContext";
+import Link from "next-intl/link";
+import { AudioGuide, Comment, User } from "@/models/models";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-intl/client";
 
 
 export default function ListAudioGuides() {

@@ -4,12 +4,12 @@ import firebaseApp from "@/services/firebaseService";
 import { AudioGuide, User } from "@/models/models";
 import { GeoPoint, addDoc, collection, doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 import { ChangeEvent, useContext, useEffect, useState } from "react";
-import { AuthContext } from "../contexts/authContext";
+import { AuthContext } from "@/contexts/authContext";
 import { UploadResult, getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import AutocompletePlaces from "./autocompletePlaces";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-intl/client";
 import { sendEmailVerification } from "firebase/auth";
-import Link from "next/link";
+import Link from "next-intl/link";
 
 export interface NewOrEditAudioGuideProps {
     id: string | null | undefined

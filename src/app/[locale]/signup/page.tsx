@@ -1,11 +1,10 @@
 "use client";
 
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
-import firebaseApp from "../../services/firebaseService";
+import firebaseApp from "@/services/firebaseService";
 import { getFirestore, collection, addDoc, doc, setDoc } from "firebase/firestore";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-
+import { useRouter } from "next-intl/client";
 
 export default function SignUp() {
 

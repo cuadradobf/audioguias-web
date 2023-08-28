@@ -5,7 +5,7 @@ import NewOrEditAudioGuide from "@/components/newOrEditAudioguide";
 
 import { useContext, useEffect } from "react";
 import { AuthContext } from "@/contexts/authContext";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-intl/client";
 
 export default function NewAudioGuide() {
 

@@ -2,7 +2,7 @@
 
 import { ChangeEvent, MouseEventHandler, useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/contexts/authContext";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-intl/client";
 import { StorageReference, UploadResult, deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import firebaseApp from "@/services/firebaseService";
 import { User } from "@/models/models";

@@ -1,11 +1,9 @@
 "use client";
 
 import firebaseApp from "@/services/firebaseService";
-import { log } from "console";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { useState } from "react";
-import { useRouter } from "next/navigation"
-
+import { useRouter } from "next-intl/client";
 
 export default function Reset() {
     const auth = getAuth(firebaseApp);

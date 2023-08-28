@@ -1,13 +1,14 @@
 "use client";
 
 import { useContext, useEffect, useState } from "react"
-import { AuthContext } from "../contexts/authContext"
+import { AuthContext } from "@/contexts/authContext"
 import { getAuth, signOut } from "firebase/auth";
-import { redirect, useRouter } from "next/navigation";
-import firebaseApp from "../services/firebaseService";
-import Link from "next/link";
+import {useRouter} from 'next-intl/client';
+import firebaseApp from "@/services/firebaseService";
+import Link from "next-intl/link";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { useProfileImageURL } from "@/hooks/useProfileImageURL";
+import LocaleSwitcher from "./localeSwitcher";
 
 export default function NavBar() {
 
@@ -26,8 +27,7 @@ export default function NavBar() {
         { id: 1, name: "Home", href: "/" },
         { id: 2, name: "Mis Audioguías", href: "/audioguides" },
         { id: 3, name: "Crear Audioguía", href: "/audioguides/new" },
-        { id: 4, name: "Idioma", href: "#" },
-       // { id: 5, name: "Perfil", href: "/profile" },
+        // { id: 5, name: "Perfil", href: "/profile" },
     ]
 
     const notLoggedRoutes = [
@@ -89,7 +89,7 @@ export default function NavBar() {
                                 {!!user
                                     //TODO: colocar a la derecha
                                     ? <div className="flex space-x-4">
-                                        <img className="h-8 w-8 rounded-full" src={imageProfileURL} onClick={() => {router.push("/profile")}} alt="Imagen del perfil"></img>
+                                        <img className="h-8 w-8 rounded-full" src={imageProfileURL} onClick={() => { router.push("/profile") }} alt="Imagen del perfil"></img>
                                         <button className="text-white bg-red-900 hover:bg-red-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium" onClick={logout}>Logout</button>
                                     </div>
                                     : <div className="flex space-x-4">
@@ -97,6 +97,8 @@ export default function NavBar() {
                                         <Link href="/signup" className="text-white bg-purple-900 hover:bg-purple-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Signup</Link>
                                     </div>
                                 }
+
+                                <LocaleSwitcher />
                             </div>
                         </div>
                     </div>
@@ -111,7 +113,7 @@ export default function NavBar() {
 
                     {!!user
                         ? <div className="flex flex-col space-y-1 px-2 pb-3 pt-2">
-                            <img className="h-8 w-8 rounded-full" src={imageProfileURL} onClick={() => {router.push("/profile")}} alt="Imagen del perfil"></img>
+                            <img className="h-8 w-8 rounded-full" src={imageProfileURL} onClick={() => { router.push("/profile") }} alt="Imagen del perfil"></img>
                             <button className="text-white bg-red-900 hover:bg-red-700 hover:text-white rounded-md px-3 py-2 block text-sm font-medium" onClick={logout}>Logout</button>
                         </div>
                         : <div className="flex flex-col space-y-1 px-2 pb-3 pt-2">
@@ -119,6 +121,9 @@ export default function NavBar() {
                             <Link href="/signup" className="text-white bg-red-900 hover:bg-red-700 hover:text-white rounded-md px-3 py-2 block text-sm font-medium">Signup</Link>
                         </div>
                     }
+
+                    <LocaleSwitcher />
+
                 </div>
             </div>
         </nav>
