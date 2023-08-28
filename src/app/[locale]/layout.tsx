@@ -6,7 +6,7 @@ import {NextIntlClientProvider} from 'next-intl';
 import {notFound} from 'next/navigation';
 
 
-import i18n from '@/i18n'
+
 import NavBar from '@/components/navbar';
 import Footer from '@/components/footer';
 
