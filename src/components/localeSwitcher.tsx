@@ -21,7 +21,7 @@ export default function LocaleSwitcher() {
   return (
     <>
       <select
-        className="inline-flex appearance-none bg-transparent py-3 pl-2 pr-6"
+        className="text-gray-600 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
         defaultValue={locale}
         disabled={isPending}
         onChange={onSelectChange}

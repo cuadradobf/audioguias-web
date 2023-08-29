@@ -23,10 +23,11 @@ export default function Home() {
     <div>
       
       <section className="hero">
-        <h1>{t('hello')}</h1>
-        <h2>Descubre lugares fascinantes con nuestras audio guías</h2>
-        <p>Explora destinos turísticos de manera única y envolvente. Crea y comparte tus propias guías.</p>
-        <Link className="defaultButton" href="/download">Descarga nuestra app</Link>
+        <h1 className="defaultTitle">{t('welcome_message')}</h1>
+        <h2>{t('welcome_message2')}</h2>
+        <p>{t('welcome_message3')}</p>
+        <br />
+        <Link className="defaultButton" href="/download">{t('download_message')}</Link>
       </section>
 
     </div>

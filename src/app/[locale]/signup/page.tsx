@@ -5,10 +5,12 @@ import firebaseApp from "@/services/firebaseService";
 import { getFirestore, collection, addDoc, doc, setDoc } from "firebase/firestore";
 import { useState } from "react";
 import { useRouter } from "next-intl/client";
+import {useTranslations} from 'next-intl';
 
 export default function SignUp() {
 
     const {push} = useRouter();
+    const t = useTranslations();
 
     const auth = getAuth(firebaseApp);
     const db = getFirestore(firebaseApp);
@@ -48,31 +50,33 @@ export default function SignUp() {
       event.preventDefault();
 
       const regexName = new RegExp(/^[a-zA-ZÀ-ÿ\u00f1\u00d1]+( [a-zA-ZÀ-ÿ\u00f1\u00d1]+)*$/);
-      const regex = /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,16}$/;
-      const regexPassword = new RegExp(regex)
+      const regexPassword = new RegExp(/^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,16}$/);
 
       if (password !== confirmPassword) {
-        setError('passwords-not-match');
+        setError(t('password_dont_match'));
         return;
       }
       
       if (!regexPassword.test(password)) {
-        setError('password-too-weak');
+        setError(t('password_to_weak'));
         return;
       }
       
       if (!regexName.test(name)) {
-        setError('invalid-name');
+        setError(t('invalid_name'));
+        return;
+      }
+      if (surname != "" && !regexName.test(surname)) {
+        setError(t('invalid_surname'));
         return;
       }
 
       try {
-
         const userCredential = await createUserWithEmailAndPassword(auth, email, password)
         addNewUser();
         updateAuthName();
         sendEmailVerification(auth.currentUser!);
-        alert('User created successfully');        
+        alert(t('account_created'));        
         push('/audioguides');
 
       } catch(err: any) {
@@ -82,17 +86,17 @@ export default function SignUp() {
         /* implement error handling of create user with email and password of firebase using switch case  */
         switch (errorCode) {
           case 'auth/email-already-in-use':
-            setError('email-in-use');
+            setError(t('email_already_exists'));
             break;
 
           case 'auth/invalid-email':
-            setError('invalid-email');
+            setError(t('invalid_email'));
             break;
 
           case 'auth/weak-password':
-            setError('password-too-weak');
+            setError(t('password_to_weak'));
             break;
-            // Todo implement error handling of setDoc
+            
           default:
             alert(errorMessage);
             console.log('Error code: ', errorCode);
@@ -107,7 +111,7 @@ export default function SignUp() {
         <form className="flex flex-col items-center justify-center w-full md:w-1/2 lg:w-1/3 mx-auto"  id="registrationForm" onSubmit={handleSubmit}>
           
           <div className="defaultTitle">
-                Registration
+            {t('signup')}
           </div>
       
           {error != '' && (<p className="error">Error: {error}</p>)}
@@ -117,7 +121,7 @@ export default function SignUp() {
               <label 
                 className="defaultLabel"
                 htmlFor="regName">
-                  Name
+                  {t('name')}
               </label>
               <input 
                 className="defaultInput"
@@ -130,7 +134,7 @@ export default function SignUp() {
               <label 
                 className="defaultLabel"
                 htmlFor="regSurname">
-                  Surname (optional)
+                  {t('surname')}
               </label>
               <input 
                 className="defaultInput"
@@ -143,7 +147,7 @@ export default function SignUp() {
               <label 
                 className="defaultLabel"
                 htmlFor="regEmail">
-                  Email
+                  {t('email')}
               </label>
               <input 
                 className="defaultInput"
@@ -157,7 +161,7 @@ export default function SignUp() {
               <label 
                 className="defaultLabel"
                 htmlFor="regPassword">
-                  Password
+                  {t('password')}
               </label>
               <input 
                 className="defaultInput"
@@ -171,7 +175,7 @@ export default function SignUp() {
               <label 
                 className="defaultLabel"
                 htmlFor="regConfirmPassword">
-                  Confirm Password
+                  {t('password_confirmation')}
               </label>
               <input 
                 className="defaultInput"
@@ -181,7 +185,9 @@ export default function SignUp() {
                 onChange={(ev) => { setConfirmPassword(ev.target.value) }} 
                 value={confirmPassword} 
                 required/>
-              <button className="defaultButton" type="submit">Register</button>
+              <button className="defaultButton" type="submit">
+                {t('register')}
+              </button>
             </div>
           </div>
 

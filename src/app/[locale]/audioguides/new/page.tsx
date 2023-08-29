@@ -10,14 +10,13 @@ import { useRouter } from "next-intl/client";
 export default function NewAudioGuide() {
 
     const { push } = useRouter();
-    
-    
+    const { user } = useContext(AuthContext);
+
     useEffect(() => {
-        const { user } = useContext(AuthContext);
         if (!user) {
             push('/login');
         }
-    }, []);
+    }, [user]);
 
     return (
         <NewOrEditAudioGuide id={null} />

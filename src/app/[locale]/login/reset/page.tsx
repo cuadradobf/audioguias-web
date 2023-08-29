@@ -4,19 +4,18 @@ import firebaseApp from "@/services/firebaseService";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { useState } from "react";
 import { useRouter } from "next-intl/client";
+import {useTranslations} from 'next-intl';
 
 export default function Reset() {
     const auth = getAuth(firebaseApp);
     const [email, setEmail] = useState('');
     const {push} = useRouter();
     const [error, setError] = useState('');
+    const t = useTranslations();
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if (email == '') {
-            setError('empty-email');
-            return;
-        }
+        
         try {
             await sendPasswordResetEmail(auth, email);
             console.log("Email sent");
@@ -39,7 +38,7 @@ export default function Reset() {
     return (
         <div className="flex flex-col">
             <div className="mb-6 text-2xl font-semibold text-gray-900 dark:text-white">    
-                Reset password  
+            {t('reset_password')} 
             </div>
 
             {error != '' && (<p className="error">Error: {error}</p>)}
@@ -48,7 +47,7 @@ export default function Reset() {
                 <div className="flex flex-wrap -mx-3 mb-6"> 
                     <div className="w-full px-3">
                         <label className="defaultLabel" htmlFor="resetPassword">
-                            Forgot your password? Put your email to reset it:
+                            {t('reset_password_message')}
                         </label>
                         <input 
                             className="defaultInput"
@@ -56,13 +55,14 @@ export default function Reset() {
                             id="resetEmail" 
                             placeholder="name@company.com" 
                             value={email} 
-                            onChange={(ev) => { setEmail(ev.target.value) }} required
+                            onChange={(ev) => { setEmail(ev.target.value) }} 
+                            required
                         />
                         <div className="md:flex md:items-center">
                             <button 
                                 className="defaultButton" 
                                 type="submit">
-                                    Send
+                                    {t('send')}
                             </button>
                         </div>
                     </div>

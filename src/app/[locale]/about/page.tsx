@@ -1,15 +1,19 @@
+"use client";
 import Link from "next-intl/link";
+import {useTranslations} from 'next-intl';
 
 export default function About() {
+  const t = useTranslations();
     return (
       <div>
-        <h2 className="defaultTitle">About</h2>
+        <h2 className="defaultTitle">{t('about_title')}</h2>
         <div className="lex flex-wrap -mx-3 mb-6 px-6">
-          <p>AudioGuias es una aplicación web que permite a los usuarios crear y compartir guías de audio para lugares turísticos.</p>
-          <p>Esta aplicación ha sido desarrollada por:</p>
+          <p>{t('about_message')}</p>
+          <p>{t('about_message2')}</p>
+          <p>{t('about_message3')}</p>
           <p>Francisco Cuadrado</p>
         </div>
-        <Link className="defaultButton" href="/contact">Contact us</Link>
+        <Link className="defaultButton" href="/contact">{t('contact_title')}</Link>
       </div>
     ) 
   }

@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next-intl/link";
+import {useTranslations} from 'next-intl';
 
 export default function Footer() {
+    const t = useTranslations();
 
     const footerRoutes = [
-        { id: 1, name: "About", href: "/about" },
-        { id: 2, name: "Download", href: "/download" },
-        { id: 3, name: "Contact", href: "/contact" }
+        { id: 1, name: t('about'), href: "/about" },
+        { id: 2, name: t('download'), href: "/download" },
+        { id: 3, name: t('contact'), href: "/contact" }
     ]
 
     return (

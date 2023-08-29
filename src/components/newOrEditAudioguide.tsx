@@ -10,6 +10,7 @@ import AutocompletePlaces from "./autocompletePlaces";
 import { useRouter } from "next-intl/client";
 import { sendEmailVerification } from "firebase/auth";
 import Link from "next-intl/link";
+import {useTranslations} from 'next-intl';
 
 export interface NewOrEditAudioGuideProps {
     id: string | null | undefined
@@ -17,10 +18,11 @@ export interface NewOrEditAudioGuideProps {
 
 export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
     
+    const t = useTranslations();
 
     const isNew: boolean = props.id === null || props === undefined;
-    const title: string = isNew ? "Nueva Audioguía" : "Editar Audioguía";
-    const submitButtonText: string = isNew ? "Crear" : "Editar";
+    const title: string = isNew ? t('new_audioguide') : t('edit_audioguide');
+    const submitButtonText: string = isNew ? t('create'): t('edit');
     const [error, setError] = useState('');
 
     const db = getFirestore(firebaseApp);
@@ -63,18 +65,36 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
+        const regexName = new RegExp(/^[a-zA-ZÀ-ÿ\u00f1\u00d1]+( [a-zA-ZÀ-ÿ\u00f1\u00d1]+)*$/);
+
+        if(!audioGuide) {
+            setError(t('generic_error'));
+            return;
+        }
+        //TODO: comprobar que no son espacios en blanco
+        if (!regexName.test(audioGuide.title)) {
+            setError(t('invalid_title'));
+            return;
+        }
+        if (!regexName.test(audioGuide.country)) {
+            setError(t('invalid_country'));
+            return;
+        }
+        if (!regexName.test(audioGuide.city)) {
+            setError(t('invalid_city'));
+            return;
+        }
+        
         const email: string = user?.email ?? "";
-        audioGuide!.user = email;
+        audioGuide.user = email;
 
-        console.log("image", image);
-        console.log("audio", audio);
-
-        audioGuide!.location = point!;
-        audioGuide!.placeId = placeId!;
-        console.log("audioGuide", audioGuide);
+        audioGuide.location = point!;
+        audioGuide.placeId = placeId!;
+        
 
         try {
             if (isNew) {
+                //Si es nuevo, se sube el audioGuide y se crea un nuevo documento.
                 const docRef = await addDoc(collection(db, "audioGuide"), audioGuide);
                 console.log("Document written with ID: ", docRef.id);
                 await uploadFile(`images/audioGuides/${docRef.id}/main.jpg`, image!);
@@ -82,6 +102,7 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
                 push(`/audioguides`);
             }
             else {
+                //Si no es nuevo, se actualiza el audioGuide y se edita el documento.
                 await setDoc(doc(db, "audioGuide", props.id!), audioGuide);
                 console.log("Document updated with ID: ", props.id);
                 push(`/audioguides`);
@@ -94,10 +115,10 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
 
             switch (errorCode) {
                 case 'auth/invalid-email': 
-                    setError('invalid-email');
+                    setError(t('invalid_email'));
                     break;
                 case 'auth/user-not-found':
-                    setError('user-not-found');
+                    setError(t('user_not_found'));
                     break;
                 
                 default:
@@ -123,7 +144,8 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
 
     const handleVerification = async () => {
         await sendEmailVerification(user!);
-        alert("Email de verificación enviado");
+        //FIXME
+        alert(t('verification_email_sent'));
     }
 
     const getDownloadUrlFirestorage = async (path: string): Promise<string> => {
@@ -156,6 +178,7 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
             fetchUser(user.email!).then(u => { setUserInfo(u) }).catch(console.error);
         
             if (!isNew) {
+                //Si no es nuevo, bajar el audioGuide y setearlo.
                 fetchAudioGuide(props.id!)
                     .then((guide) => { 
                         setAudioGuide(guide);
@@ -189,7 +212,7 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
                         <div className="flex flex-wrap -mx-3 mb-6">
                             <div className="w-full px-3">
                                 <label className="defaultLabel" htmlFor="title">
-                                    Título
+                                    {t('title')}
                                 </label>
                                 <input
                                     className="defaultInput"
@@ -202,7 +225,7 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
                                 />
                             
                                 <label className="defaultLabel" htmlFor="description">
-                                    Descripción
+                                    {t('description')}
                                 </label>
                                 <textarea 
                                     className="defaultInput"
@@ -216,7 +239,7 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
                                 </textarea>
                             
                                 <label className="defaultLabel" htmlFor="language">
-                                    Idioma
+                                    {t('language')}
                                 </label>
                                 <div className="relative">
                                     <select 
@@ -234,7 +257,7 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
                                 </div>
                             
                                 <label className="defaultLabel" htmlFor="country">
-                                    País
+                                    {t('country')}
                                 </label>
                                 <input
                                     className="defaultInput"
@@ -247,7 +270,7 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
                                 />
                             
                                 <label className="defaultLabel" htmlFor="city">
-                                    Ciudad
+                                    {t('city')}
                                 </label>
                                 <input
                                     className="defaultInput"
@@ -260,7 +283,7 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
                                 />
 
                                 <label className="defaultLabel" htmlFor="location">
-                                    Dirección
+                                    {t('address')}
                                 </label>
                                 <AutocompletePlaces placeId={audioGuide?.placeId} setPlaceId={setPlaceId} setPoint={setPoint} />
                             {/*
@@ -280,7 +303,7 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
                                 />
                             */}
                                 <label className="defaultLabel" htmlFor="image">
-                                    Imagen
+                                    {t('Image')}
                                 </label>
                                 <div className="defaultInput">
                                     {!isNew && 
@@ -299,7 +322,7 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
                                 </div>
                             
                                 <label className="defaultLabel" htmlFor="audio">
-                                    Audio
+                                    {t('audio')}
                                 </label>
                                 <div className="defaultInput">
                                     {!isNew && 
@@ -338,9 +361,9 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
                 (
                     <>
                         <div className="flex flex-col mx-auto w-full max-w-lg">
-                            <div className="defaultTitle">Verify account</div>
-                            <p>In order to access all the functionalities of the application, it is necessary to verify the account. Send an email verification:</p>
-                            <button className="defaultButton" onClick={handleVerification}>Send</button>
+                            <div className="defaultTitle">{t('verify_title')}</div>
+                            <p>{t('verification_message')}</p>
+                            <button className="defaultButton" onClick={handleVerification}>{t('send')}</button>
                         </div>
                     </>
                 )
@@ -349,9 +372,9 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
                 (
                     <>
                         <div className="flex flex-col mx-auto w-full max-w-lg">
-                            <div className="defaultTitle">Banned account</div>
-                            <p>Your account has been banned by an administrator. To find out the reasons, please contact us.</p>
-                            <Link className="defaultButton" href="/contact">Contact us</Link>
+                            <div className="defaultTitle">{t('banned_title')}</div>
+                            <p>{t('banned_message')}</p>
+                            <Link className="defaultButton" href="/contact">{t('contact_title')}</Link>
                         </div>
                     </>
                 )

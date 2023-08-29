@@ -160,26 +160,6 @@
   transition: box-shadow 0.3s;
 }
 
-/* Estilos para pantallas medianas (md) */
-@media (min-width: 768px) {
-  .formDiv {
-    margin-top: 0;
-  }
-}
-
-/* Estilos para pantallas pequeñas (sm) y pantallas medianas (md) */
-@media (max-width: 639px), (min-width: 768px) {
-  .formDiv {
-    max-width: 20rem;
-  }
-}
-
-/* Estilos para pantallas extragrandes (xl) */
-@media (min-width: 1280px) {
-  .formDiv {
-    padding: 0;
-  }
-}
 
 /* Estilos para modo oscuro */
 .dark .formDiv {

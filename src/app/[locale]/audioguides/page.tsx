@@ -9,6 +9,8 @@ import Link from "next-intl/link";
 import { AudioGuide, Comment, User } from "@/models/models";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { useRouter } from "next-intl/client";
+import {useTranslations} from 'next-intl';
+import { userInfo } from "os";
 
 
 export default function ListAudioGuides() {
@@ -17,7 +19,9 @@ export default function ListAudioGuides() {
     const auth = getAuth(firebaseApp);
     const db = getFirestore(firebaseApp);
     const storage = getStorage(firebaseApp);
+    const t = useTranslations();
 
+    const [userInfo, setUserInfo] = useState<User>();
     const [audioGuides, setAudioGuides] = useState(new Array<{ id: string, data: AudioGuide, imageUrl: string, rating: number }>());
     const [filteredAudioGuides, setFilteredAudioGuides] = useState(new Array<{ id: string, data: AudioGuide, imageUrl: string, rating: number }>());
 
@@ -46,6 +50,7 @@ export default function ListAudioGuides() {
 
     const fetchData = async () => {
         const loggedUser = await fetchUser(auth.currentUser?.email!);
+        setUserInfo(loggedUser);
         const data = new Array<{ id: string, data: AudioGuide, imageUrl: string, rating: number }>();
         let q = loggedUser.rol == "Admin" ? query(collection(db, "audioGuide")) : query(collection(db, "audioGuide"), where("user", "==", auth.currentUser?.email));
         const querySnapshot = await getDocs(q);
@@ -99,9 +104,9 @@ export default function ListAudioGuides() {
                 {!user && (<p>Debes estar logeado</p>)}
             </div>
 
-            {user && ( //TODO: mostrar texto si no hay audioguías
+            {user && ( 
                 <div className="flex flex-col">
-                    <input type="text" placeholder="Buscar audioguía por titulo, ciudad o pais..." onChange={(e) => {
+                    <input type="text" placeholder={t('search_for')} onChange={(e) => {
                         const text = e.target.value;
                         if (text.trim().length == 0) {
                             setFilteredAudioGuides(audioGuides);
@@ -121,23 +126,25 @@ export default function ListAudioGuides() {
                     <ul role="list" className="divide-y divide-gray-100">
                         {filteredAudioGuides.map((audioGuide) => (
                             <li key={audioGuide.id} className="flex justify-between gap-x-6 py-5">
+                                
                                 <Link href={`/audioguides/edit?guideId=${audioGuide.id}`} className="flex justify-between">
                                     <div className="flex min-w-0 gap-x-4">
-                                        <img className="h-12 w-12 flex-none rounded-full bg-gray-50" src={audioGuide.imageUrl} alt="" />
+                                        <img className="h-12 w-12 flex-none rounded bg-gray-50" src={audioGuide.imageUrl} alt="" />
                                         <div className="min-w-0 flex-auto">
                                             <p className="text-sm font-semibold leading-6 text-gray-900">{audioGuide.data.title}</p>
-                                            <p className="mt-1 truncate text-xs leading-5 text-gray-500">{audioGuide.data.description}</p>
+                                            <p className="mt-1 truncate text-xs leading-5 text-gray-500">{audioGuide.data.city}, {audioGuide.data.country}</p>
                                         </div>
                                     </div>
                                 </Link>
                                 <div className="shrink-0 sm:flex sm:flex-col sm:items-end">
                                     {audioGuide.rating} of 5
                                     <button className="redButton" onClick={() => {
-                                        const wantToDelete = confirm("¿Estás seguro de que quieres eliminar esta audioguía?")
+                                        //FIXME: no funciona el confirm
+                                        const wantToDelete = confirm(t('confirm_delete_audioguide'))
                                         if (wantToDelete) {
                                             deleteAudioguide(audioGuide.id)
                                         }
-                                    }}>Eliminar</button>
+                                    }}>{t('delete')}</button>
                                 </div>
                             </li>
                         ))}

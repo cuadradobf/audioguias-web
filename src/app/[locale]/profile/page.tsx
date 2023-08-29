@@ -9,6 +9,7 @@ import { User } from "@/models/models";
 import { deleteDoc, doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 import { EmailAuthProvider, deleteUser, getAuth, reauthenticateWithCredential, sendEmailVerification, updatePassword, updateProfile } from "firebase/auth";
 import { ProfileImageChangedEventDetail } from "@/events/profileImageChanged";
+import {useTranslations} from 'next-intl';
 
 export default function Profile() {
 
@@ -22,6 +23,7 @@ export default function Profile() {
     const [confirmNewPassword, setConfirmNewPassword] = useState<string>("");
     const [errorF1, setErrorF1] = useState('');
     const [errorF2, setErrorF2] = useState('');
+    const t = useTranslations();
 
     const auth = getAuth(firebaseApp);
     const db = getFirestore(firebaseApp);
@@ -70,17 +72,17 @@ export default function Profile() {
         const regexName = new RegExp(/^[a-zA-ZÀ-ÿ\u00f1\u00d1]+( [a-zA-ZÀ-ÿ\u00f1\u00d1]+)*$/);
 
         if (!regexName.test(userInfo!.name)) {
-            setErrorF1('name-invalid');
+            setErrorF1(t('invalid_name'));
             return;
         }
         if (!regexName.test(userInfo!.surname)) {
-            setErrorF1('surname-invalid');
+            setErrorF1(t('invalid_surname'));
             return;
         }
         try {
             await setDoc(doc(db, "user", user?.email!), userInfo);
             await updateAuthName();
-            alert("Datos guardados correctamente");
+            alert(t('save_data'));
         } catch (error: any) {
             //const errorCode = error.code;
             const errorMessage = error.message;
@@ -96,25 +98,27 @@ export default function Profile() {
         const regex = /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,16}$/;
         const regexPassword = new RegExp(regex)
 
+        /*
         if (actualPassword == "" || newPassword == "" || confirmNewPassword == "") {
             setErrorF2("Campos vacíos requeridos");
             return;
         }
+        */
 
         if (newPassword != confirmNewPassword) {
-            setErrorF2("Las contraseñas no coinciden");
+            setErrorF2(t('password_dont_match'));
             return;
         }
 
         if (!regexPassword.test(newPassword)) {
-            setErrorF2('password-too-weak');
+            setErrorF2(t('password_to_weak'));
             return;
         }
 
         try {
             await reauthenticateWithCredential(user!, EmailAuthProvider.credential(user!.email!, actualPassword))
             await updatePassword(user!, newPassword);
-            alert("Contraseña cambiada correctamente");
+            alert(t('password_changed'));
             return;
         } catch (error: any) {
             const errorCode = error.code;
@@ -122,7 +126,7 @@ export default function Profile() {
             console.log(error);
             switch (errorCode) {
                 case "auth/wrong-password":
-                    setErrorF2("wrong-password");
+                    setErrorF2(t('wrong_password'));
                     break;
                 default:
                     setErrorF2(errorMessage.toString());
@@ -132,9 +136,9 @@ export default function Profile() {
     }
 
     const handleDeleteAccount = async () => {
-        const actualPw = prompt("Introduce tu contraseña para confirmar la eliminación de la cuenta");
+        const actualPw = prompt(t('confirm_delete_account'));
         if (actualPw == null || actualPw == "") {
-            alert("No se ha introducido ninguna contraseña");
+            alert(t('password_empty'));
             return;
         }
 
@@ -149,7 +153,7 @@ export default function Profile() {
             await deleteDoc(doc(db, "user", user?.email!))
 
             await auth.signOut();
-            alert("Usuario borrado correctamente")
+            alert(t('account_deleted'))
 
         } catch (error: any) {
             const errorCode = error.code;
@@ -158,7 +162,7 @@ export default function Profile() {
             console.log(error);
             switch (errorCode) {
                 case "auth/wrong-password":
-                    alert("wrong-password");
+                    alert(t('wrong_password'));
                     break;
                 default:
                     alert(errorMessage.toString());
@@ -197,7 +201,7 @@ export default function Profile() {
 
     const handleVerification = async () => {
         await sendEmailVerification(user!);
-        alert("Email de verificación enviado");
+        alert(t('verification_email_sent'));
     }
 
     useEffect(() => {
@@ -231,15 +235,18 @@ export default function Profile() {
                 (
                     <div className="flex flex-col mx-auto">
                         <div className="defaultTitle">
-                            Profile
+                            {t('profile')}
                         </div>
                         <div className="flex flex-col w-full max-w-lg">
                             <img
                                 className="object-content rounded-full mx-auto my-2 border-2 border-gray-200 shadow-md "
-                                src={imageProfileURL} alt="Imagen del perfil"
+                                src={imageProfileURL} 
+                                alt="Imagen del perfil"
                                 style={{ width: '50%', aspectRatio: '1/1' }}
                             />
-
+                            {
+                                //TODO: Cambiar idioma
+                            }
                             <input type="file" accept=".jpg, .jpeg"
                                 onChange={handleImageUpload}
                             />
@@ -252,7 +259,7 @@ export default function Profile() {
                                     setImageProfileURL(urlDefault);
                                     const ev = new CustomEvent("profileImageChanged", { detail: { url: urlDefault } as ProfileImageChangedEventDetail });
                                     window.dispatchEvent(ev);
-                                }}>Eliminar</button>)
+                                }}>{t('delete')}</button>)
                             }
 
                             <br />
@@ -266,9 +273,13 @@ export default function Profile() {
                             <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
                                 {errorF1 != '' && (<p className="error">Error: {errorF1}</p>)}
                                 <div>
-                                    <div className="defaultTitle">Edit name or surname</div>
+                                    <div className="defaultTitle">
+                                        {t('edit_name_surname')}
+                                    </div>
 
-                                    <label htmlFor="name" className="defaultLabel">Name</label>
+                                    <label htmlFor="name" className="defaultLabel">
+                                        {t('name')}
+                                    </label>
                                     <input
                                         type="text"
                                         id="name"
@@ -280,7 +291,9 @@ export default function Profile() {
                                     />
                                 </div>
                                 <div>
-                                    <label htmlFor="surname" className="defaultLabel">Surname</label>
+                                    <label htmlFor="surname" className="defaultLabel">
+                                        {t('surname')}
+                                    </label>
                                     <input
                                         type="text"
                                         id="surname"
@@ -290,20 +303,24 @@ export default function Profile() {
                                         onChange={handleInputChange}
                                     />
                                 </div>
-                                <button type="submit" className="defaultButton">Save</button>
+                                <button type="submit" className="defaultButton">
+                                    {t('save')}
+                                </button>
                             </form>
 
                             <br />
                             <hr />
 
-                            <div className="defaultTitle">Change password</div>
+                            <div className="defaultTitle">
+                                {t('change_password')}
+                            </div>
                             {errorF2 != '' && (<p className="error">Error: {errorF2}</p>)}
 
                             <form className="space-y-4 md:space-y-6" onSubmit={handleSubmitChangePassword}>
                                 <label
                                     htmlFor="actualPassword"
                                     className="defaultLabel">
-                                    Actual password
+                                    {t('actual_password')}
                                 </label>
                                 <input
                                     type="password"
@@ -312,9 +329,9 @@ export default function Profile() {
                                     required
                                     onChange={(ev) => { setActualPassword(ev.target.value) }} />
                                 <label
-                                    htmlFor="actualPassword"
+                                    htmlFor="newPassword"
                                     className="defaultLabel">
-                                    New password
+                                    {t('new_password')}
                                 </label>
                                 <input
                                     type="password"
@@ -323,9 +340,9 @@ export default function Profile() {
                                     required
                                     onChange={(ev) => { setNewPassword(ev.target.value) }} />
                                 <label
-                                    htmlFor="actualPassword"
+                                    htmlFor="confirmNewPassword"
                                     className="defaultLabel">
-                                    Confirm new password
+                                    {t('confirm_new_password')}
                                 </label>
                                 <input
                                     type="password"
@@ -334,15 +351,21 @@ export default function Profile() {
                                     required
                                     onChange={(ev) => { setConfirmNewPassword(ev.target.value) }} />
 
-                                <button type="submit" className="defaultButton">Change</button>
+                                <button type="submit" className="defaultButton">
+                                    {t('change')}
+                                </button>
                             </form>
 
                             <br />
                             <hr />
 
-                            <div className="defaultTitle">Delete account</div>
+                            <div className="defaultTitle">
+                                {t('delete_account')}
+                            </div>
 
-                            <button className="redButton" onClick={handleDeleteAccount}>Delete</button>
+                            <button className="redButton" onClick={handleDeleteAccount}>
+                                {t('delete')}
+                            </button>
                         </div>
                     </div>
                 )
@@ -352,14 +375,24 @@ export default function Profile() {
                 (
                     <>
                         <div className="flex flex-col mx-auto w-full max-w-lg">
-                            <div className="defaultTitle">Verify account</div>
-                            <p>In order to access all the functionalities of the application, it is necessary to verify the account. Send an email verification:</p>
-                            <button className="defaultButton" onClick={handleVerification}>Send</button>
+                            <div className="defaultTitle">
+                                {t('verify_title')}
+                            </div>
+                            <p>{t('verification_message')}</p>
+                            <button 
+                                className="defaultButton" 
+                                onClick={handleVerification}>
+                                    {t('send')}
+                            </button>
                             <br />
                             <hr />
 
-                            <div className="defaultTitle">Delete account</div>
-                            <button className="redButton" onClick={handleDeleteAccount}>Delete</button>
+                            <div className="defaultTitle">
+                                {t('delete_account')}
+                            </div>
+                            <button className="redButton" onClick={handleDeleteAccount}>
+                                {t('delete')}
+                            </button>
                         </div>
                     </>
                 )
