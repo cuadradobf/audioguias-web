@@ -10,7 +10,7 @@ import { AudioGuide, Comment, User } from "@/models/models";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { useRouter } from "next-intl/client";
 import {useTranslations} from 'next-intl';
-import { userInfo } from "os";
+
 
 
 export default function ListAudioGuides() {
@@ -126,8 +126,8 @@ export default function ListAudioGuides() {
                     <ul role="list" className="divide-y divide-gray-100">
                         {filteredAudioGuides.map((audioGuide) => (
                             <li key={audioGuide.id} className="flex justify-between gap-x-6 py-5">
-                                
-                                <Link href={`/audioguides/edit?guideId=${audioGuide.id}`} className="flex justify-between">
+
+                                <Link style={{cursor: userInfo?.rol == "Admin" ? "default" : "pointer" }} href={userInfo?.rol == "Admin" ? "#" : `/audioguides/edit?guideId=${audioGuide.id}`} className="flex justify-between">
                                     <div className="flex min-w-0 gap-x-4">
                                         <img className="h-12 w-12 flex-none rounded bg-gray-50" src={audioGuide.imageUrl} alt="" />
                                         <div className="min-w-0 flex-auto">

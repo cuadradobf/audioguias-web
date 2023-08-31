@@ -84,6 +84,6 @@
     "invalid_title": "The title must not contain numbers or special characters.",
     "invalid_country": "The country must not contain numbers or special characters.",
     "invalid_city": "The city must not contain numbers or special characters.",
-    "generic_error": "An error has occurred. Please try again later."
-
+    "generic_error": "An error has occurred. Please try again later.",
+    "empty_fields": "All fields are required"
 }

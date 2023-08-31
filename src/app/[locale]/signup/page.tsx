@@ -52,6 +52,11 @@ export default function SignUp() {
       const regexName = new RegExp(/^[a-zA-ZÀ-ÿ\u00f1\u00d1]+( [a-zA-ZÀ-ÿ\u00f1\u00d1]+)*$/);
       const regexPassword = new RegExp(/^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,16}$/);
 
+      if (name.trim() == '' || email.trim() == '' || password.trim() == '' || confirmPassword.trim() == '') {
+        setError(t('empty_fields'));
+        return;
+      }
+
       if (password !== confirmPassword) {
         setError(t('password_dont_match'));
         return;
@@ -83,7 +88,7 @@ export default function SignUp() {
         const errorCode = err.code;
         const errorMessage = err.message;
 
-        /* implement error handling of create user with email and password of firebase using switch case  */
+        
         switch (errorCode) {
           case 'auth/email-already-in-use':
             setError(t('email_already_exists'));

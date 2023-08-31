@@ -71,7 +71,10 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
             setError(t('generic_error'));
             return;
         }
-        //TODO: comprobar que no son espacios en blanco
+        if(audioGuide.title.trim() == "" || audioGuide.description.trim() == "" || audioGuide.country.trim() == "" || audioGuide.city.trim() == "") {
+            setError(t('empty_fields'));
+            return;
+        }
         if (!regexName.test(audioGuide.title)) {
             setError(t('invalid_title'));
             return;
