@@ -5,7 +5,7 @@ import {useTranslations} from 'next-intl';
 export default function About() {
   const t = useTranslations();
     return (
-      <div>
+      <div className="p-4">
         <h2 className="defaultTitle">{t('about_title')}</h2>
         <div className="lex flex-wrap -mx-3 mb-6 px-6">
           <p>{t('about_message')}</p>

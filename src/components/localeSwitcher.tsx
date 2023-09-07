@@ -27,7 +27,7 @@ export default function LocaleSwitcher() {
         onChange={onSelectChange}
       >
         {['en', 'es'].map((cur) => (
-          <option key={cur} value={cur}>
+          <option className='p-5' key={cur} value={cur}>
             { t(cur) }
           </option>
         ))}

@@ -79,7 +79,7 @@ export default function NavBar() {
                                 {!!user
                                     //TODO: colocar a la derecha
                                     ? <div className="flex content-end space-x-10">
-                                        <img className="object-cover rounded-full h-8 w-8" src={imageProfileURL} onClick={() => { router.push("/profile") }} alt="Imagen del perfil"></img>
+                                        <img className="object-cover rounded-full h-8 w-8 cursor-pointer" src={imageProfileURL} onClick={() => { router.push("/profile") }} alt="Imagen del perfil"></img>
                                         <button className="defaultButtonNV2" onClick={logout}>
                                             {t('logout')}
                                         </button>
@@ -103,22 +103,22 @@ export default function NavBar() {
             <div className="sm:hidden" id="mobile-menu">
                 <div className="space-y-1 px-2 pb-3 pt-2">
                     {!!user
-                        ? loggedRoutes.map((route) => (<Link key={route.id} href={route.href} className="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">{route.name}</Link>))
-                        : notLoggedRoutes.map((route) => (<Link key={route.id} href={route.href} className="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">{route.name}</Link>))
+                        ? loggedRoutes.map((route) => (<Link key={route.id} href={route.href} className="text-white hover:bg-green-400 hover:text-white block rounded-md px-3 py-2 text-base font-medium">{route.name}</Link>))
+                        : notLoggedRoutes.map((route) => (<Link key={route.id} href={route.href} className="text-white hover:bg-green-400 hover:text-white block rounded-md px-3 py-2 text-base font-medium">{route.name}</Link>))
                     }
 
                     {!!user
                         ? <div className="flex flex-col space-y-1 px-2 pb-3 pt-2">
-                            <img className="object-cover rounded-full h-8 w-8" src={imageProfileURL} onClick={() => { router.push("/profile") }} alt="Imagen del perfil"></img>
-                            <button className="text-white bg-red-900 hover:bg-red-700 hover:text-white rounded-md px-3 py-2 block text-sm font-medium" onClick={logout}>
+                            <img className="object-cover rounded-full h-8 w-8 cursor-pointer" src={imageProfileURL} onClick={() => { router.push("/profile") }} alt="Imagen del perfil"></img>
+                            <button className="text-white hover:bg-green-400 hover:text-white block rounded-md px-3 py-2 text-base font-medium" onClick={logout}>
                                 {t('logout')}
                             </button>
                         </div>
                         : <div className="flex flex-col space-y-1 px-2 pb-3 pt-2">
-                            <Link href="/login" className="text-white bg-blue-900 hover:bg-blue-700 hover:text-white rounded-md px-3 py-2 block text-sm font-medium">
+                            <Link href="/login" className="text-white hover:bg-green-400 hover:text-white block rounded-md px-3 py-2 text-base font-medium">
                                 {t('login')}
                             </Link>
-                            <Link href="/signup" className="text-white bg-red-900 hover:bg-red-700 hover:text-white rounded-md px-3 py-2 block text-sm font-medium">
+                            <Link href="/signup" className="text-white hover:bg-green-400 hover:text-white block rounded-md px-3 py-2 text-base font-medium">
                                 {t('signup')}
                             </Link>
                         </div>

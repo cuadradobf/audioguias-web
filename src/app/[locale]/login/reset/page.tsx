@@ -49,7 +49,7 @@ export default function Reset() {
     }, []);
 
     return (
-        <>
+        <div className="p-4">
             {isLoading && (
                 <div className="flex flex-col items-center justify-center">
                     <div role="status">
@@ -62,7 +62,7 @@ export default function Reset() {
                 </div>
             )}
             {!isLoading && (
-                <div className="flex flex-col">
+                <div className="flex flex-col items-center justify-center mx-auto">
                     <div className="mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
                         {t('reset_password')}
                     </div>
@@ -96,7 +96,7 @@ export default function Reset() {
                     </form>
                 </div>
             )}
-        </>
+        </div>
 
     )
 }

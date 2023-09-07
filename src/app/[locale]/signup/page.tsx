@@ -138,7 +138,8 @@ export default function SignUp() {
         </div>
       )}
       {!isLoading && (
-        <form className="flex flex-col items-center justify-center w-full md:w-1/2 lg:w-1/3 mx-auto" id="registrationForm" onSubmit={handleSubmit}>
+        
+        <form className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0" id="registrationForm" onSubmit={handleSubmit}>
 
           <div className="defaultTitle">
             {t('signup')}

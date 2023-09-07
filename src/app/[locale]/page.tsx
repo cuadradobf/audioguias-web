@@ -54,7 +54,7 @@ export default function Home() {
       backgroundPosition: 'center',
     }}>
       <section className="hero p-5 text-center">
-        <h1 className="defaultTitle">{t('welcome_message')}</h1>
+        <h1 className="defaultTitleWhite">{t('welcome_message')}</h1>
         <h2 className="text-white">{t('welcome_message2')}</h2>
         <p className="text-white">{t('welcome_message3')}</p>
         <br />

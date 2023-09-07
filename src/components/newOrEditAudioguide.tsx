@@ -209,7 +209,7 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
 
     return (
 
-        <>  {auth.currentUser?.emailVerified && userInfo?.banned == false &&
+        <div className="p-4">  {auth.currentUser?.emailVerified && userInfo?.banned == false &&
             (     
                 <div className="flex flex-col">
 
@@ -370,6 +370,6 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
                     </>
                 )
             }
-        </> 
+        </div> 
     );
 }

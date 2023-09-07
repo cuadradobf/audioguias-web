@@ -73,7 +73,7 @@ export default function Login() {
 
   return (
 
-    <>
+    <div className="p-4">
       {isLoading && (
         <div className="flex flex-col items-center justify-center">
           <div role="status">
@@ -139,6 +139,6 @@ export default function Login() {
           </div>
         </section>
       )}
-    </>
+    </div>
   )
 }

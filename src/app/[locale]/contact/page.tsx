@@ -47,7 +47,7 @@ export default function Contact() {
         }
     }
     return (
-      <div className="flex flex-col">
+      <div className="flex flex-col p-4 items-center justify-center mx-auto">
         <h2 className="defaultTitle">{t('contact_title')}</h2>
           {error != '' && (<p className="error">Error: {error}</p>)}
         <form 

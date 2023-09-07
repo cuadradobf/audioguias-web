@@ -61,7 +61,7 @@ function ImgItemRow(props: ImgItemRowProps) {
     }
 
     return (
-        <img className="h-12 w-12 flex-none rounded bg-gray-50" src={url} alt="" />
+        <img className="h-20 w-20 flex-none rounded bg-gray-50" src={url} alt="" />
     )
 }
 
@@ -185,11 +185,11 @@ export default function ListAudioGuides() {
         );
     }
 
-    //TODO: implementar el resto de elementos de la audioguia
+    
     return (
-        <>
+        <div className="p-4">
             <div>
-                {!auth.currentUser && (<p>Debes estar logeado</p>)}
+                {!auth.currentUser && (<p className="defaultTitle">Debes estar logeado</p>)}
             </div>
 
             {auth.currentUser && (
@@ -240,6 +240,6 @@ export default function ListAudioGuides() {
                     </ul>
                 </div>
             )}
-        </>
+        </div>
     )
 }
