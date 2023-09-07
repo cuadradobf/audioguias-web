@@ -48,17 +48,17 @@ export default function Home() {
   
 
   return (
-    <div style={{ 
+    <div className="grow flex flex-col justify-center" style={{ 
       backgroundImage: `url(${imageURL})`, 
       backgroundSize: 'cover', 
-      backgroundPosition: 'center'
+      backgroundPosition: 'center',
     }}>
-      <section className="hero">
+      <section className="hero p-5 text-center">
         <h1 className="defaultTitle">{t('welcome_message')}</h1>
         <h2 className="text-white">{t('welcome_message2')}</h2>
         <p className="text-white">{t('welcome_message3')}</p>
         <br />
-        <button onClick={downloadFile}  className="redButton">{t('download_message')}</button>
+        <button onClick={downloadFile} className="redButtonWA">{t('download_message')}</button>
       </section>
 
     </div>

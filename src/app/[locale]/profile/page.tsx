@@ -1,7 +1,6 @@
 "use client";
 
 import { ChangeEvent, MouseEventHandler, useContext, useEffect, useLayoutEffect, useState } from "react";
-import { AuthContext } from "@/contexts/authContext";
 import { useRouter } from "next-intl/client";
 import { StorageReference, UploadResult, deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import firebaseApp from "@/services/firebaseService";
@@ -14,8 +13,6 @@ import {useTranslations} from 'next-intl';
 export default function Profile() {
 
     const { push } = useRouter();
-    // const { user } = useContext(AuthContext);
-    const [user, setUser] = useState<FirebaseUser | undefined | null>();
     const [isLoading, setIsLoading] = useState(true);
     const [userInfo, setUserInfo] = useState<User>();
     const [imageProfileURL, setImageProfileURL] = useState<string>();
@@ -81,7 +78,7 @@ export default function Profile() {
             return;
         }
         try {
-            await setDoc(doc(db, "user", user?.email!), userInfo);
+            await setDoc(doc(db, "user", auth.currentUser?.email!), userInfo);
             await updateAuthName();
             alert(t('save_data'));
         } catch (error: any) {
@@ -98,16 +95,11 @@ export default function Profile() {
         event.preventDefault();
         const regex = /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,16}$/;
         const regexPassword = new RegExp(regex)
-
-        /*
-        if (actualPassword == "" || newPassword == "" || confirmNewPassword == "") {
-            setErrorF2("Campos vacíos requeridos");
-            return;
-        }
-        */
+    
+       if(actualPassword.trim() == '' || newPassword.trim() == '' || confirmNewPassword.trim() == '')
 
         if (newPassword != confirmNewPassword) {
-            setErrorF2(t('password_dont_match'));
+            setErrorF2(t('empty_fields'));
             return;
         }
 
@@ -117,8 +109,8 @@ export default function Profile() {
         }
 
         try {
-            await reauthenticateWithCredential(user!, EmailAuthProvider.credential(user!.email!, actualPassword))
-            await updatePassword(user!, newPassword);
+            await reauthenticateWithCredential(auth.currentUser!, EmailAuthProvider.credential(user!.email!, actualPassword))
+            await updatePassword(auth.currentUser!, newPassword);
             alert(t('password_changed'));
             return;
         } catch (error: any) {
@@ -144,14 +136,14 @@ export default function Profile() {
         }
 
         try {
-            await reauthenticateWithCredential(user!, EmailAuthProvider.credential(user!.email!, actualPw))
+            await reauthenticateWithCredential(auth.currentUser!, EmailAuthProvider.credential(user!.email!, actualPw))
 
             if (!decodeURIComponent(imageProfileURL!).includes("images/default/profile.png")) {
                 await deleteImageProfile()
             }
 
-            await deleteUser(user!)
-            await deleteDoc(doc(db, "user", user?.email!))
+            await deleteUser(auth.currentUser!)
+            await deleteDoc(doc(db, "user", auth.currentUser?.email!))
 
             await auth.signOut();
             alert(t('account_deleted'))
@@ -183,7 +175,7 @@ export default function Profile() {
     const handleImageUpload = async (event: ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files.length > 0) {
             const file = event.target.files[0];
-            const result: UploadResult = await uploadFile(`images/${user?.email}/profile`, file);
+            const result: UploadResult = await uploadFile(`images/${auth.currentUser?.email}/profile`, file);
             const url = await getImageURL(result.ref.fullPath);
             setImageProfileURL(url);
 
@@ -196,12 +188,12 @@ export default function Profile() {
     }
 
     const deleteImageProfile = async () => {
-        const refImage: StorageReference = ref(storage, `images/${user?.email}/profile`);
+        const refImage: StorageReference = ref(storage, `images/${auth.currentUser?.email}/profile`);
         await deleteObject(refImage);
     }
 
     const handleVerification = async () => {
-        await sendEmailVerification(user!);
+        await sendEmailVerification(auth.currentUser!);
         alert(t('verification_email_sent'));
     }
 
@@ -232,36 +224,11 @@ export default function Profile() {
                         );
                 }
             });
-            /*
-        getAuth(firebaseApp).authStateReady.then
-        setUser(getAuth(firebaseApp).currentUser);
-        if (!user) {
-            push('/login');
-        }
-        else {
-            fetchUser(user.email!).then(u => { setUserInfo(u) }).catch(console.error);
-            getImageURL(`images/${user.email}/profile`)
-                .then(url => {
-                    setImageProfileURL(url);
-                    const ev = new CustomEvent("profileImageChanged", { detail: { url: url } as ProfileImageChangedEventDetail });
-                    window.dispatchEvent(ev);
-                })
-                .catch(
-                    (error) => {
-                        getImageURL(`images/default/profile.png`)
-                            .then(urlDefault => {
-                                setImageProfileURL(urlDefault);
-                                const ev = new CustomEvent("profileImageChanged", { detail: { url: urlDefault } as ProfileImageChangedEventDetail });
-                                window.dispatchEvent(ev);
-                            })
-                    }
-                );
-        }*/
     }, []);
 
     return (
         <>
-            {isLoading == false && user?.emailVerified &&
+            {isLoading == false && auth.currentUser?.emailVerified &&
                 (
                     <div className="flex flex-col mx-auto">
                         <div className="defaultTitle">
@@ -295,7 +262,7 @@ export default function Profile() {
                             <br />
                             <br />
 
-                            <p>{user?.email}</p>
+                            <p>{auth.currentUser?.email}</p>
 
                             <br />
                             <hr />
@@ -401,7 +368,7 @@ export default function Profile() {
                 )
             }
 
-            {isLoading == false && !user?.emailVerified &&
+            {isLoading == false && !auth.currentUser?.emailVerified &&
                 (
                     <>
                         <div className="flex flex-col mx-auto w-full max-w-lg">

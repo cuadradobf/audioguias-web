@@ -3,12 +3,11 @@
 import firebaseApp from "@/services/firebaseService";
 import { AudioGuide, User } from "@/models/models";
 import { GeoPoint, addDoc, collection, doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
-import { ChangeEvent, useContext, useEffect, useState } from "react";
-import { AuthContext } from "@/contexts/authContext";
+import { ChangeEvent, useEffect, useState } from "react";
 import { UploadResult, getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import AutocompletePlaces from "./autocompletePlaces";
 import { useRouter } from "next-intl/client";
-import { sendEmailVerification } from "firebase/auth";
+import { getAuth, sendEmailVerification } from "firebase/auth";
 import Link from "next-intl/link";
 import {useTranslations} from 'next-intl';
 
@@ -27,8 +26,9 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
 
     const db = getFirestore(firebaseApp);
     const storage = getStorage(firebaseApp);
+    const auth = getAuth(firebaseApp);
 
-    const { user } = useContext(AuthContext);
+    
     const { push } = useRouter();
 
     const [userInfo, setUserInfo] = useState<User>();
@@ -88,7 +88,7 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
             return;
         }
         
-        const email: string = user?.email ?? "";
+        const email: string = auth.currentUser?.email ?? "";
         audioGuide.user = email;
 
         audioGuide.location = point!;
@@ -146,7 +146,7 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
     }
 
     const handleVerification = async () => {
-        await sendEmailVerification(user!);
+        await sendEmailVerification(auth.currentUser!);
         //FIXME
         alert(t('verification_email_sent'));
     }
@@ -177,33 +177,39 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
     }
 
     useEffect(() => {
-        if (user) {
-            fetchUser(user.email!).then(u => { setUserInfo(u) }).catch(console.error);
+
+        auth.authStateReady()
+            .then(() => {
+                if (!auth.currentUser || auth.currentUser === null) {
+                    push("/login");
+                }else{
+                    fetchUser(auth.currentUser.email!).then(u => { setUserInfo(u) }).catch(console.error);
         
-            if (!isNew) {
-                //Si no es nuevo, bajar el audioGuide y setearlo.
-                fetchAudioGuide(props.id!)
-                    .then((guide) => { 
-                        setAudioGuide(guide);
-                        setPoint(guide.location);
-                        setPlaceId(guide.placeId);
-                    })
-                    .catch(console.error);
+                    if (!isNew) {
+                        //Si no es nuevo, bajar el audioGuide y setearlo.
+                        fetchAudioGuide(props.id!)
+                            .then((guide) => { 
+                                setAudioGuide(guide);
+                                setPoint(guide.location);
+                                setPlaceId(guide.placeId);
+                            })
+                            .catch(console.error);
 
-                getDownloadUrlFirestorage(`images/audioGuides/${props.id}/main.jpg`)
-                    .then((url) => { setImageUrl(url); })
-                    .catch(console.error);
+                        getDownloadUrlFirestorage(`images/audioGuides/${props.id}/main.jpg`)
+                            .then((url) => { setImageUrl(url); })
+                            .catch(console.error);
 
-                getDownloadUrlFirestorage(`audios/audioGuides/${props.id}/audio.mp3`)
-                    .then((url) => { setAudioUrl(url); })
-                    .catch(console.error);
-            }
-        }
+                        getDownloadUrlFirestorage(`audios/audioGuides/${props.id}/audio.mp3`)
+                            .then((url) => { setAudioUrl(url); })
+                            .catch(console.error);
+                    }
+                }
+            });
     }, []);
 
     return (
 
-        <>  {user?.emailVerified && userInfo?.banned == false &&
+        <>  {auth.currentUser?.emailVerified && userInfo?.banned == false &&
             (     
                 <div className="flex flex-col">
 
@@ -295,7 +301,6 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
                                 <div className="defaultInput">
                                     {!isNew && 
                                         (   
-                                            //TODO: darle un tamaño fijo
                                             <img 
                                                 className="object-contain rounded mx-auto my-2 border-2 border-gray-200 shadow-md "
                                                 src={imageUrl} alt="Imagen de la audioGuia"   
@@ -314,7 +319,6 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
                                 <div className="defaultInput">
                                     {!isNew && 
                                         (   
-                                            //TODO: centrar y darle un margen
                                             <audio 
                                                 className="mx-auto my-2"
                                                 src={audioUrl} 
@@ -344,7 +348,7 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
                     </form>
                 </div>
             )}
-            {!user?.emailVerified && userInfo?.banned == false &&
+            {!auth.currentUser?.emailVerified && userInfo?.banned == false &&
                 (
                     <>
                         <div className="flex flex-col mx-auto w-full max-w-lg">

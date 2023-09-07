@@ -4,7 +4,6 @@ import { getAuth } from "firebase/auth";
 import firebaseApp from "@/services/firebaseService";
 import { collection, query, where, getDocs, getFirestore, deleteDoc, doc, getDoc } from "firebase/firestore";
 import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "@/contexts/authContext";
 import Link from "next-intl/link";
 import { AudioGuide, Comment, User } from "@/models/models";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
@@ -106,7 +105,6 @@ function RatingItemRow(props: RatingItemRowProps) {
 export default function ListAudioGuides() {
 
     const [isLoading, setLoading] = useState(true);
-    const { user } = useContext(AuthContext);
     const auth = getAuth(firebaseApp);
 
     const t = useTranslations();
@@ -191,10 +189,10 @@ export default function ListAudioGuides() {
     return (
         <>
             <div>
-                {!user && (<p>Debes estar logeado</p>)}
+                {!auth.currentUser && (<p>Debes estar logeado</p>)}
             </div>
 
-            {user && (
+            {auth.currentUser && (
                 <div className="flex flex-col">
                     <input type="text" placeholder={t('search_for')} onChange={(e) => {
                         const text = e.target.value;

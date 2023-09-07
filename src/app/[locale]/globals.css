@@ -189,6 +189,41 @@
   outline: none;
 }
 
+.redButtonWA {
+  background-color: #BD5E39;
+  color: white;
+  font-weight: 500;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.375rem;
+  text-align: center;
+  outline: none;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+}
+
+.redButtonWA:hover {
+  background-color: #d87148;
+}
+
+.redButtonWA:focus {
+  box-shadow: #d87148;
+  outline: none;
+}
+
+/* Estilos para modo oscuro */
+.dark .redButtonWA {
+  background-color: #BD5E39;
+}
+
+.dark .redButtonWA:hover {
+  background-color: #d87148;
+}
+
+.dark .redButtonWA:focus {
+  box-shadow: #d87148;
+  outline: none;
+}
+
 .formDiv {
   width: 100%;
   background-color: white;
