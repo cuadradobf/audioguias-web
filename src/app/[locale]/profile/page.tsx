@@ -1,20 +1,21 @@
 "use client";
 
-import { ChangeEvent, MouseEventHandler, useContext, useEffect, useState } from "react";
+import { ChangeEvent, MouseEventHandler, useContext, useEffect, useLayoutEffect, useState } from "react";
 import { AuthContext } from "@/contexts/authContext";
 import { useRouter } from "next-intl/client";
 import { StorageReference, UploadResult, deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import firebaseApp from "@/services/firebaseService";
 import { User } from "@/models/models";
 import { deleteDoc, doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
-import { EmailAuthProvider, deleteUser, getAuth, reauthenticateWithCredential, sendEmailVerification, updatePassword, updateProfile } from "firebase/auth";
+import { EmailAuthProvider, deleteUser, getAuth, reauthenticateWithCredential, sendEmailVerification, updatePassword, updateProfile, User as FirebaseUser } from "firebase/auth";
 import { ProfileImageChangedEventDetail } from "@/events/profileImageChanged";
 import {useTranslations} from 'next-intl';
 
 export default function Profile() {
 
     const { push } = useRouter();
-    const { user } = useContext(AuthContext);
+    // const { user } = useContext(AuthContext);
+    const [user, setUser] = useState<FirebaseUser | undefined | null>();
     const [isLoading, setIsLoading] = useState(true);
     const [userInfo, setUserInfo] = useState<User>();
     const [imageProfileURL, setImageProfileURL] = useState<string>();
@@ -205,6 +206,35 @@ export default function Profile() {
     }
 
     useEffect(() => {
+
+        auth.authStateReady()
+            .then(() => {
+                if (!auth.currentUser || auth.currentUser === null) {
+                    push("/login");
+                }
+                else {
+                    fetchUser(auth.currentUser.email!).then(u => { setUserInfo(u) }).catch(console.error);
+                    getImageURL(`images/${auth.currentUser.email}/profile`)
+                        .then(url => {
+                            setImageProfileURL(url);
+                            const ev = new CustomEvent("profileImageChanged", { detail: { url: url } as ProfileImageChangedEventDetail });
+                            window.dispatchEvent(ev);
+                        })
+                        .catch(
+                            (error) => {
+                                getImageURL(`images/default/profile.png`)
+                                    .then(urlDefault => {
+                                        setImageProfileURL(urlDefault);
+                                        const ev = new CustomEvent("profileImageChanged", { detail: { url: urlDefault } as ProfileImageChangedEventDetail });
+                                        window.dispatchEvent(ev);
+                                    })
+                            }
+                        );
+                }
+            });
+            /*
+        getAuth(firebaseApp).authStateReady.then
+        setUser(getAuth(firebaseApp).currentUser);
         if (!user) {
             push('/login');
         }
@@ -226,8 +256,8 @@ export default function Profile() {
                             })
                     }
                 );
-        }
-    }, [user]);
+        }*/
+    }, []);
 
     return (
         <>
@@ -239,7 +269,7 @@ export default function Profile() {
                         </div>
                         <div className="flex flex-col w-full max-w-lg">
                             <img
-                                className="object-content rounded-full mx-auto my-2 border-2 border-gray-200 shadow-md "
+                                className="object-cover rounded-full mx-auto my-2 border-2 border-gray-200 shadow-md "
                                 src={imageProfileURL} 
                                 alt="Imagen del perfil"
                                 style={{ width: '50%', aspectRatio: '1/1' }}

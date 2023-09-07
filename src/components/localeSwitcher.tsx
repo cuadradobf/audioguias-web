@@ -21,7 +21,7 @@ export default function LocaleSwitcher() {
   return (
     <>
       <select
-        className="text-gray-600 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+        className="defaultButtonNV2"
         defaultValue={locale}
         disabled={isPending}
         onChange={onSelectChange}

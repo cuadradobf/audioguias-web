@@ -2,7 +2,7 @@
 
 import { useContext, useEffect, useState } from "react"
 import { AuthContext } from "@/contexts/authContext"
-import { getAuth, signOut } from "firebase/auth";
+import { getAuth, signOut, User as FirebaseUser } from "firebase/auth";
 import {useRouter} from 'next-intl/client';
 import firebaseApp from "@/services/firebaseService";
 import Link from "next-intl/link";
@@ -13,7 +13,8 @@ import {useTranslations} from 'next-intl';
 
 export default function NavBar() {
 
-    const { user } = useContext(AuthContext)
+    // const { user } = useContext(AuthContext)
+    const [user, setUser] = useState<FirebaseUser | undefined | null>();
     const imageProfileURL = useProfileImageURL();
     const auth = getAuth(firebaseApp);
     const storageNavBar = getStorage(firebaseApp);
@@ -29,7 +30,6 @@ export default function NavBar() {
         { id: 1, name: t('home'), href: "/" },
         { id: 2, name: t('my_audioguides'), href: "/audioguides" },
         { id: 3, name: t('create_audioguide'), href: "/audioguides/new" },
-        // { id: 5, name: "Perfil", href: "/profile" },
     ]
 
     const notLoggedRoutes = [
@@ -40,28 +40,14 @@ export default function NavBar() {
         return await getDownloadURL(ref(storageNavBar, path));
     }
 
-    /*
     useEffect(() => {
-        if (user) {
-            getImageURLNavBar(`images/${user.email}/profile`)
-                .then(url => {
-                    setImageProfileURL(url);
-                })
-                .catch(
-                    (error) => {
-                        getImageURLNavBar(`images/default/profile.png`)
-                            .then(urlDefault => {
-                                setImageProfileURL(urlDefault);
-                            })
-                    }
-                );
-        }
-    }, [user]);
-    */
+        setUser(auth.currentUser);
+        auth.onAuthStateChanged(setUser);
+    }, [user])
 
     return (
-        <nav className="bg-gray-800">
-            <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+        <nav className="primaryColor">
+            <div className="max-w-7xl px-2 sm:px-6 lg:px-8">
                 <div className="relative flex h-16 items-center justify-between">
                     <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
                         <button type="button" className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
@@ -79,30 +65,30 @@ export default function NavBar() {
                             </svg>
                         </button>
                     </div>
-                    <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+                    <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-center">
                         <div className="flex flex-shrink-0 items-center">
-                            <img className="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company" />
+                            <img className="h-8 w-auto" src="https://firebasestorage.googleapis.com/v0/b/audioguias-24add.appspot.com/o/images%2Fdefault%2FlogoBlanco.png?alt=media&token=b0e151ba-f6f6-492e-8b0f-55aba7366819" alt="Your Company" />
                         </div>
                         <div className="hidden sm:ml-6 sm:block">
-                            <div className="flex space-x-4">
+                            <div className="flex space-x-10">
                                 {!!user
-                                    ? loggedRoutes.map((route) => (<Link key={route.id} href={route.href} className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">{route.name}</Link>))
-                                    : notLoggedRoutes.map((route) => (<Link key={route.id} href={route.href} className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">{route.name}</Link>))
+                                    ? loggedRoutes.map((route) => (<Link key={route.id} href={route.href} className="defaultButtonNV">{route.name}</Link>))
+                                    : notLoggedRoutes.map((route) => (<Link key={route.id} href={route.href} className="defaultButtonNV">{route.name}</Link>))
                                 }
 
                                 {!!user
                                     //TODO: colocar a la derecha
-                                    ? <div className="flex space-x-4">
-                                        <img className="h-8 w-8 rounded-full" src={imageProfileURL} onClick={() => { router.push("/profile") }} alt="Imagen del perfil"></img>
-                                        <button className="text-white bg-red-900 hover:bg-red-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium" onClick={logout}>
+                                    ? <div className="flex content-end space-x-10">
+                                        <img className="object-cover rounded-full h-8 w-8" src={imageProfileURL} onClick={() => { router.push("/profile") }} alt="Imagen del perfil"></img>
+                                        <button className="defaultButtonNV2" onClick={logout}>
                                             {t('logout')}
                                         </button>
                                     </div>
-                                    : <div className="flex space-x-4">
-                                        <Link href="/login" className="text-white bg-blue-900 hover:bg-blue-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">
+                                    : <div className="flex space-x-10">
+                                        <Link href="/login" className="defaultButtonNV2">
                                             {t('login')}
                                         </Link>
-                                        <Link href="/signup" className="text-white bg-purple-900 hover:bg-purple-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">
+                                        <Link href="/signup" className="defaultButtonNV2">
                                             {t('signup')}
                                         </Link>
                                     </div>
@@ -123,7 +109,7 @@ export default function NavBar() {
 
                     {!!user
                         ? <div className="flex flex-col space-y-1 px-2 pb-3 pt-2">
-                            <img className="h-8 w-8 rounded-full" src={imageProfileURL} onClick={() => { router.push("/profile") }} alt="Imagen del perfil"></img>
+                            <img className="object-cover rounded-full h-8 w-8" src={imageProfileURL} onClick={() => { router.push("/profile") }} alt="Imagen del perfil"></img>
                             <button className="text-white bg-red-900 hover:bg-red-700 hover:text-white rounded-md px-3 py-2 block text-sm font-medium" onClick={logout}>
                                 {t('logout')}
                             </button>

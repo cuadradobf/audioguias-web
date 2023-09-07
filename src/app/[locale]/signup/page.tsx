@@ -121,7 +121,7 @@ export default function SignUp() {
       
           {error != '' && (<p className="error">Error: {error}</p>)}
 
-          <div className="formDiv">
+          <div >
             <div className="p-6 space-y-4">
               <label 
                 className="defaultLabel"
@@ -190,7 +190,7 @@ export default function SignUp() {
                 onChange={(ev) => { setConfirmPassword(ev.target.value) }} 
                 value={confirmPassword} 
                 required/>
-              <button className="defaultButton" type="submit">
+              <button className="redButton" type="submit">
                 {t('register')}
               </button>
             </div>

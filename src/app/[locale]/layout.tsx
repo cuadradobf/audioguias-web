@@ -46,7 +46,6 @@ export default async function RootLayout(props: RootLayoutProps) {
     <html lang={locale}>
       <body className={classesBody}>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <AuthProvider>
             <div className="grow flex flex-col">
               <NavBar />
               <div className="grow flex flex-col justify-center p-5">
@@ -54,7 +53,6 @@ export default async function RootLayout(props: RootLayoutProps) {
               </div>
               <Footer />
             </div>
-          </AuthProvider>
         </NextIntlClientProvider>
       </body>
     </html>

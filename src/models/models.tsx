@@ -7,7 +7,6 @@ interface AudioGuide {
     location: GeoPoint;
     country: string;
     city: string;
-    cost: number;
     user: string;
     placeId: string;
 }
@@ -17,7 +16,7 @@ interface User {
     surname: string;
     rol: string;
     locationMode: string;
-    unitOfMeasutement: string;
+    unitOfMeasurement: string;
     banned: boolean;   
 }
 

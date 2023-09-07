@@ -289,22 +289,6 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
                                     {t('address')}
                                 </label>
                                 <AutocompletePlaces placeId={audioGuide?.placeId} setPlaceId={setPlaceId} setPoint={setPoint} />
-                            {/*
-                                //TODO: en caso de implementar el coste hay que cambiar el tipo de dato a number
-                                <label className="defaultLabel" htmlFor="cost">
-                                    Coste
-                                </label>
-                                <input
-                                    className="defaultInput"
-                                    type="float"
-                                    min="0"
-                                    id="cost"
-                                    name="cost"
-                                    value={audioGuide?.cost ?? 0}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            */}
                                 <label className="defaultLabel" htmlFor="image">
                                     {t('Image')}
                                 </label>
@@ -350,7 +334,7 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
                         </div>
                         <div className="md:flex md:items-center">
                             <button 
-                                className="defaultButton" 
+                                className="redButton" 
                                 type="submit">
                                     {submitButtonText}
                             </button>
@@ -366,7 +350,7 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
                         <div className="flex flex-col mx-auto w-full max-w-lg">
                             <div className="defaultTitle">{t('verify_title')}</div>
                             <p>{t('verification_message')}</p>
-                            <button className="defaultButton" onClick={handleVerification}>{t('send')}</button>
+                            <button className="redButton" onClick={handleVerification}>{t('send')}</button>
                         </div>
                     </>
                 )
@@ -377,7 +361,7 @@ export default function NewOrEditAudioGuide(props: NewOrEditAudioGuideProps) {
                         <div className="flex flex-col mx-auto w-full max-w-lg">
                             <div className="defaultTitle">{t('banned_title')}</div>
                             <p>{t('banned_message')}</p>
-                            <Link className="defaultButton" href="/contact">{t('contact_title')}</Link>
+                            <Link className="redButton" href="/contact">{t('contact_title')}</Link>
                         </div>
                     </>
                 )

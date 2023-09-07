@@ -13,7 +13,7 @@ export default function About() {
           <p>{t('about_message3')}</p>
           <p>Francisco Cuadrado</p>
         </div>
-        <Link className="defaultButton" href="/contact">{t('contact_title')}</Link>
+        <Link className="redButton" href="/contact">{t('contact_title')}</Link>
       </div>
     ) 
   }

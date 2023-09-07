@@ -29,7 +29,7 @@
     "password": "Contraseña",
     "password_confirmation": "Confirma la contraseña",
     "forgot_password": "¿Has olvidado tu contraseña?",
-    "dont_have_account": "¿No tienes una cuenta?",
+    "dont_have_account": "¿No tienes una cuenta? ",
     "register": "Regístrate",
     "sign_in": "Iniciar sesión",
     "search_for": "Buscar audioguía por título, ciudad o país...",
@@ -85,6 +85,7 @@
     "invalid_country": "El país no debe llevar números ni caracteres especiales.",
     "invalid_city": "La ciudad no debe llevar números ni caracteres especiales.",
     "generic_error": "Ha ocurrido un error. Por favor, inténtelo de nuevo más tarde.",
-    "empty_fields": "Por favor, rellene todos los campos."
+    "empty_fields": "Por favor, rellene todos los campos.",
+    "valoration": "Valoración: "
 
 }

@@ -17,7 +17,7 @@ interface AutocompletePlacesProps {
 export default function AutocompletePlaces(props: AutocompletePlacesProps) {
 
     useEffect(() => {
-        if (props.placeId) {
+        if (props.placeId != null && props.placeId != undefined) {
             getDetails({ placeId: props.placeId })
                 .then((details) => {
                     const results = details as google.maps.places.PlaceResult;
@@ -28,6 +28,7 @@ export default function AutocompletePlaces(props: AutocompletePlacesProps) {
                     console.log("Error: ", error);
                 });
         }
+
     }, [props.placeId]);
 
     const callbackAutoplaces = () => {

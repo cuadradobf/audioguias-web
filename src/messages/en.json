@@ -29,7 +29,7 @@
     "password": "Password",
     "password_confirmation": "Confirm password",
     "forgot_password": "Forgot your password?",
-    "dont_have_account": "Don't have an account yet?",
+    "dont_have_account": "Don't have an account yet? ",
     "register": "Register",
     "sign_in": "Sign in",
     "search_for": "Search audio guide by title, city or country...",
@@ -85,5 +85,6 @@
     "invalid_country": "The country must not contain numbers or special characters.",
     "invalid_city": "The city must not contain numbers or special characters.",
     "generic_error": "An error has occurred. Please try again later.",
-    "empty_fields": "All fields are required"
+    "empty_fields": "All fields are required",
+    "valoration": "Rating: "
 }
