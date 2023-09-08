@@ -109,7 +109,7 @@ export default function Profile() {
         }
 
         try {
-            await reauthenticateWithCredential(auth.currentUser!, EmailAuthProvider.credential(user!.email!, actualPassword))
+            await reauthenticateWithCredential(auth.currentUser!, EmailAuthProvider.credential(auth.currentUser!.email!, actualPassword))
             await updatePassword(auth.currentUser!, newPassword);
             alert(t('password_changed'));
             return;
