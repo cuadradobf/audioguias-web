@@ -136,7 +136,7 @@ export default function Profile() {
         }
 
         try {
-            await reauthenticateWithCredential(auth.currentUser!, EmailAuthProvider.credential(user!.email!, actualPw))
+            await reauthenticateWithCredential(auth.currentUser!, EmailAuthProvider.credential(auth.currentUser!.email!, actualPw))
 
             if (!decodeURIComponent(imageProfileURL!).includes("images/default/profile.png")) {
                 await deleteImageProfile()
