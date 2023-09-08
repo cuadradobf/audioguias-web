@@ -130,23 +130,31 @@ export default function Profile() {
 
     const handleDeleteAccount = async () => {
         const actualPw = prompt(t('confirm_delete_account'));
-        if (actualPw == null || actualPw == "") {
+        if (actualPw == null || actualPw.trim() == '') {
             alert(t('password_empty'));
             return;
         }
 
         try {
-            await reauthenticateWithCredential(auth.currentUser!, EmailAuthProvider.credential(auth.currentUser!.email!, actualPw))
+            if(auth.currentUser!= null && auth.currentUser.email != null ){
+                let email = auth.currentUser.email
+                email.toString()
+                await reauthenticateWithCredential(auth.currentUser, EmailAuthProvider.credential(email, actualPw));
 
-            if (!decodeURIComponent(imageProfileURL!).includes("images/default/profile.png")) {
-                await deleteImageProfile()
+                if (!decodeURIComponent(imageProfileURL!).includes("images/default/profile.png")) {
+                    await deleteImageProfile();
+                }
+    
+                await deleteUser(auth.currentUser!);
+                let docRef = doc(db, "user", email);
+                await deleteDoc(docRef);
+                
+    
+                await auth.signOut();
+                alert(t('account_deleted'))
+                push("/")
             }
-
-            await deleteUser(auth.currentUser!)
-            await deleteDoc(doc(db, "user", auth.currentUser?.email!))
-
-            await auth.signOut();
-            alert(t('account_deleted'))
+            
 
         } catch (error: any) {
             const errorCode = error.code;
