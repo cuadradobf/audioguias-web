@@ -14,7 +14,6 @@ export default function NavBar() {
 
     const imageProfileURL = useProfileImageURL();
     const auth = getAuth(firebaseApp);
-    const storageNavBar = getStorage(firebaseApp);
     const router = useRouter();
     const t = useTranslations();
     
@@ -39,7 +38,7 @@ export default function NavBar() {
         if(auth.currentUser != null){
             setIsLoged(true)
         }
-    }, [auth.currentUser]);
+    }, []);
 
     return (
         <nav className="primaryColor">
