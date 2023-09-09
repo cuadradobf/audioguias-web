@@ -33,10 +33,6 @@ export default function Home() {
       console.error("Error descargando archivo: ", error);
     }
   }
-  
-
- 
-  
 
   return (
     <div className="grow flex flex-col justify-center" style={{ 
@@ -45,9 +41,9 @@ export default function Home() {
       backgroundPosition: 'center',
     }}>
       <section className="hero p-5 text-center">
-        <h1 className="defaultTitleWhite">{t('welcome_message')}</h1>
-        <h2 className="text-white">{t('welcome_message2')}</h2>
-        <p className="text-white">{t('welcome_message3')}</p>
+        <h1 className="defaultTitleWhite tracking-widest">AUDIOGUIAS</h1>
+        <p className="text-white text-3xl">{t('welcome_message2')}</p>
+        <p className="text-white text-3xl">{t('welcome_message3')}</p>
         <br />
         <button onClick={downloadFile} className="redButtonWA">{t('download_message')}</button>
       </section>

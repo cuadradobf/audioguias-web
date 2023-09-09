@@ -47,11 +47,11 @@ export default function Contact() {
         }
     }
     return (
-      <div className="flex flex-col p-4 items-center justify-center mx-auto">
+      <div className="p-4 flex flex-col items-center justify-center ">
         <h2 className="defaultTitle">{t('contact_title')}</h2>
           {error != '' && (<p className="error">Error: {error}</p>)}
         <form 
-          className="flex flex-col w-full max-w-lg" 
+          className="w-full max-w-lg" 
           id="contactForm" 
           onSubmit={handleSubmit}>
           <div>

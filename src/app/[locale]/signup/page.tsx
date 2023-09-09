@@ -145,7 +145,7 @@ export default function SignUp() {
           {error != '' && (<p className="error">Error: {error}</p>)}
 
           <div >
-            <div className="p-6 space-y-4">
+            <div className="p-6 space-y-2">
               <label
                 className="defaultLabel"
                 htmlFor="regName">
@@ -221,9 +221,5 @@ export default function SignUp() {
         </form>
       )}
     </>
-
-
-
-
   )
 }

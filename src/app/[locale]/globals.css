@@ -16,6 +16,10 @@
   }
 }
 
+* {
+  font-family: 'Barlow', sans-serif;
+}
+
 .primaryColor {
   background-color: #048B68;
 }
@@ -74,18 +78,6 @@
   .defaultInput {
     font-size: 0.875rem;
   }
-}
-
-/* Estilos para modo oscuro */
-.dark .defaultInput {
-  background-color: #4a5568;
-  border: 1px solid #718096;
-  color: #cbd5e0;
-}
-
-.dark .defaultInput:focus {
-  border-color: #63b3ed;
-  box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.5);
 }
 
 .defaultButton {
@@ -181,20 +173,6 @@
   outline: none;
 }
 
-/* Estilos para modo oscuro */
-.dark .redButton {
-  background-color: #BD5E39;
-}
-
-.dark .redButton:hover {
-  background-color: #d87148;
-}
-
-.dark .redButton:focus {
-  box-shadow: #d87148;
-  outline: none;
-}
-
 .redButtonWA {
   background-color: #BD5E39;
   color: white;
@@ -216,31 +194,10 @@
   outline: none;
 }
 
-/* Estilos para modo oscuro */
-.dark .redButtonWA {
-  background-color: #BD5E39;
-}
-
-.dark .redButtonWA:hover {
-  background-color: #d87148;
-}
-
-.dark .redButtonWA:focus {
-  box-shadow: #d87148;
-  outline: none;
-}
-
 .formDiv {
   width: 100%;
   background-color: white;
   border-radius: 0.375rem;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s;
-}
-
-
-/* Estilos para modo oscuro */
-.dark .formDiv {
-  border: 1px solid #4a5568;
-  background-color: #2d3748;
 }

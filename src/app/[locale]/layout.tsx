@@ -44,6 +44,14 @@ export default async function RootLayout(props: RootLayoutProps) {
 
   return (
     <html lang={locale}>
+      <style>
+        {`
+          @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&display=swap');
+          body {
+            font-family: 'Barlow', sans-serif;
+          }
+        `}
+      </style>
       <body className={classesBody}>
         <NextIntlClientProvider locale={locale} messages={messages}>
             <div className="grow flex flex-col">
