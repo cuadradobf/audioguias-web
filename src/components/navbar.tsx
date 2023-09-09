@@ -17,6 +17,8 @@ export default function NavBar() {
     const storageNavBar = getStorage(firebaseApp);
     const router = useRouter();
     const t = useTranslations();
+    
+    const [isLoged, setIsLoged] = useState(false);
 
     const logout = () => {
         signOut(auth);
@@ -33,9 +35,11 @@ export default function NavBar() {
         { id: 1, name: t('home'), href: "/" },
     ]
 
-    const getImageURLNavBar = async (path: string): Promise<string> => {
-        return await getDownloadURL(ref(storageNavBar, path));
-    }
+    useEffect(() => {
+        if(auth.currentUser != null){
+            setIsLoged(true)
+        }
+    }, [auth.currentUser]);
 
     return (
         <nav className="primaryColor">
@@ -63,12 +67,12 @@ export default function NavBar() {
                         </div>
                         <div className="hidden sm:ml-6 sm:block">
                             <div className="flex space-x-10">
-                                {!!auth.currentUser
+                                {isLoged
                                     ? loggedRoutes.map((route) => (<Link key={route.id} href={route.href} className="defaultButtonNV">{route.name}</Link>))
                                     : notLoggedRoutes.map((route) => (<Link key={route.id} href={route.href} className="defaultButtonNV">{route.name}</Link>))
                                 }
 
-                                {!!auth.currentUser
+                                {isLoged
                                     //TODO: colocar a la derecha
                                     ? <div className="flex content-end space-x-10">
                                         <img className="object-cover rounded-full h-8 w-8 cursor-pointer" src={imageProfileURL} onClick={() => { router.push("/profile") }} alt="Imagen del perfil"></img>
@@ -94,12 +98,12 @@ export default function NavBar() {
             </div>
             <div className="sm:hidden" id="mobile-menu">
                 <div className="space-y-1 px-2 pb-3 pt-2">
-                    {!!auth.currentUser
+                    {isLoged
                         ? loggedRoutes.map((route) => (<Link key={route.id} href={route.href} className="text-white hover:bg-green-400 hover:text-white block rounded-md px-3 py-2 text-base font-medium">{route.name}</Link>))
                         : notLoggedRoutes.map((route) => (<Link key={route.id} href={route.href} className="text-white hover:bg-green-400 hover:text-white block rounded-md px-3 py-2 text-base font-medium">{route.name}</Link>))
                     }
 
-                    {!!auth.currentUser
+                    {isLoged
                         ? <div className="flex flex-col space-y-1 px-2 pb-3 pt-2">
                             <img className="object-cover rounded-full h-8 w-8 cursor-pointer" src={imageProfileURL} onClick={() => { router.push("/profile") }} alt="Imagen del perfil"></img>
                             <button className="text-white hover:bg-green-400 hover:text-white block rounded-md px-3 py-2 text-base font-medium" onClick={logout}>

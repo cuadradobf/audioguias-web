@@ -9,8 +9,6 @@ import { getDownloadURL, getStorage, ref } from "firebase/storage";
 
 export default function Home() {
 
-  const { user } = useContext(AuthContext)
-
   const auth = getAuth(firebaseApp);
 
   const imageURL = "https://firebasestorage.googleapis.com/v0/b/audioguias-24add.appspot.com/o/images%2Fdefault%2FhomeWeb.jpg?alt=media&token=78e5faa5-5fd0-4db3-a616-563008b27611";
