@@ -46,7 +46,7 @@ export default function NavBar() {
 
         return () => unsubscribe();
     }, []);
-    if (isLoading || !isLoged) {
+    if (isLoading) {
         return
         <>
             <nav className="primaryColor">
