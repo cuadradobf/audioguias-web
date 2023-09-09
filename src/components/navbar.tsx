@@ -5,7 +5,6 @@ import { getAuth, signOut, User as FirebaseUser } from "firebase/auth";
 import {useRouter} from 'next-intl/client';
 import firebaseApp from "@/services/firebaseService";
 import Link from "next-intl/link";
-import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { useProfileImageURL } from "@/hooks/useProfileImageURL";
 import LocaleSwitcher from "./localeSwitcher";
 import {useTranslations} from 'next-intl';
@@ -17,6 +16,7 @@ export default function NavBar() {
     const router = useRouter();
     const t = useTranslations();
     
+    const [isLoading, setIsLoading] = useState(true);    
     const [isLoged, setIsLoged] = useState(false);
 
     const logout = () => {
@@ -35,10 +35,20 @@ export default function NavBar() {
     ]
 
     useEffect(() => {
-        if(auth.currentUser != null){
-            setIsLoged(true)
-        }
+        const unsubscribe = getAuth().onAuthStateChanged((user) => {
+            setIsLoading(false);  // Desactivar la carga cuando se reciba el estado de autenticación
+            if (user) {
+                setIsLoged(true);
+            } else {
+                setIsLoged(false);
+            }
+        });
+    
+        return () => unsubscribe();
     }, []);
+    if (isLoading) {
+        return <></>;  
+    }
 
     return (
         <nav className="primaryColor">
