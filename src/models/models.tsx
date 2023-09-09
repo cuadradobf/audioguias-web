@@ -15,8 +15,6 @@ interface User {
     name: string;
     surname: string;
     rol: string;
-    locationMode: string;
-    unitOfMeasurement: string;
     banned: boolean;   
 }
 

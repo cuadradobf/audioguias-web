@@ -35,13 +35,10 @@ export default function SignUp() {
   const addNewUser = async () => {
     const email: string = auth.currentUser?.email?.toString() || '';
 
-    const docRef = await setDoc(doc(db, "user", email), {
+    await setDoc(doc(db, "user", email), {
       name: name,
       surname: surname,
-      provider: '',
       rol: 'Standar',
-      locationMode: 'off',
-      unitOfMeasurement: 'Km',
       banned: false
     });
 
