@@ -86,6 +86,7 @@
     "invalid_city": "La ciudad no debe llevar números ni caracteres especiales.",
     "generic_error": "Ha ocurrido un error. Por favor, inténtelo de nuevo más tarde.",
     "empty_fields": "Por favor, rellene todos los campos.",
-    "valoration": "Valoración: "
+    "valoration": "Valoración: ",
+    "no_results": "No hay resultados."
 
 }

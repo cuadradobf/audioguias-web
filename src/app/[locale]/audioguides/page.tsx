@@ -96,7 +96,7 @@ function RatingItemRow(props: RatingItemRowProps) {
     }
 
     return (
-        
+
         <p>{rating}/5</p>
     )
 }
@@ -185,7 +185,7 @@ export default function ListAudioGuides() {
         );
     }
 
-    
+
     return (
         <div className="p-4">
             <div>
@@ -194,7 +194,7 @@ export default function ListAudioGuides() {
 
             {auth.currentUser && (
                 <div className="flex flex-col">
-                    <input type="text" placeholder={t('search_for')} onChange={(e) => {
+                    <input className="defaultInput mb-2" type="text" placeholder={t('search_for')} onChange={(e) => {
                         const text = e.target.value;
                         if (text.trim().length == 0) {
                             setFilteredAudioGuides(audioGuides);
@@ -209,7 +209,7 @@ export default function ListAudioGuides() {
                         }
                     }} />
 
-                    {filteredAudioGuides.length == 0 && (<p>No hay resultados</p>)}
+                    {filteredAudioGuides.length == 0 && (<p className="defaultTitle mx-auto">{t('no_results')}</p>)}
 
                     <ul role="list" className="divide-y divide-gray-100">
                         {filteredAudioGuides.map((audioGuide) => (
@@ -228,7 +228,6 @@ export default function ListAudioGuides() {
                                     <p>{t('valoration')}</p>
                                     <RatingItemRow audioguideId={audioGuide.id} />
                                     <button className="redButton" onClick={() => {
-                                        //FIXME: no funciona el confirm
                                         const wantToDelete = confirm(t('confirm_delete_audioguide'))
                                         if (wantToDelete) {
                                             deleteAudioguide(audioGuide.id)
