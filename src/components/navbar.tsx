@@ -29,10 +29,7 @@ export default function NavBar() {
         router.push("/");
     }
 
-    const loggedRoutes = [
-        { id: 1, name: t('my_audioguides'), href: "/audioguides" },
-        { id: 2, name: t('create_audioguide'), href: "/audioguides/new" },
-    ]
+    
 
     useEffect(() => {
         const unsubscribe = getAuth().onAuthStateChanged((user) => {
@@ -116,8 +113,14 @@ export default function NavBar() {
                         <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-language">
                             <ul className="flex flex-col  p-4 md:p-0 mt-4 md:flex-row md:space-x-8 md:mt-0 md:border-0">
                                 {isLoged &&
-                                    loggedRoutes.map((route) => (<li><Link key={route.id} href={route.href} className="defaultButtonNV">{route.name}</Link></li>))
+                                    <>
+                                        <li><Link href="/audioguides" className="defaultButtonNV">t('my_audioguides')</Link></li>
+                                        <li><Link href="/audioguides/new" className="defaultButtonNV">t('create_audioguide')</Link></li>
+                                    </>
+                                    
                                 }
+
+
                             </ul>
                         </div>
                     </div>
@@ -125,8 +128,10 @@ export default function NavBar() {
                     <div className={menuOpen ? "block" : "hidden"} id="mobile-menu">
                         <div className="space-y-1 px-2 pb-3 pt-2">
                             {isLoged &&
-                                loggedRoutes.map((route) => (<Link key={route.id} href={route.href} className="text-white hover:border-white block rounded-md px-3 py-2 text-base font-medium">{route.name}</Link>))
-                            }
+                                <>
+                                    <Link href="/audioguides" className="defaultButtonNV">t('my_audioguides')</Link>
+                                    <Link href="/audioguides/new" className="defaultButtonNV">t('create_audioguide')</Link>
+                                </>                            }
 
                         </div>
                     </div>
