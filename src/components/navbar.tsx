@@ -29,8 +29,6 @@ export default function NavBar() {
         router.push("/");
     }
 
-    
-
     useEffect(() => {
         const unsubscribe = getAuth().onAuthStateChanged((user) => {
             // Se desactiva la carga cuando se recibe el estado de autenticación
@@ -62,10 +60,7 @@ export default function NavBar() {
                     </nav>
                 </>
             )
-
             }
-
-
             {isLoading == false && (
                 <nav className="primaryColor">
                     <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -114,13 +109,11 @@ export default function NavBar() {
                             <ul className="flex flex-col  p-4 md:p-0 mt-4 md:flex-row md:space-x-8 md:mt-0 md:border-0">
                                 {isLoged &&
                                     <>
-                                        <li><Link href="/audioguides" className="defaultButtonNV">t('my_audioguides')</Link></li>
-                                        <li><Link href="/audioguides/new" className="defaultButtonNV">t('create_audioguide')</Link></li>
+                                        <li><Link href="/audioguides" className="defaultButtonNV">{t('my_audioguides')}</Link></li>
+                                        <li><Link href="/audioguides/new" className="defaultButtonNV">{t('create_audioguide')}</Link></li>
                                     </>
-                                    
+
                                 }
-
-
                             </ul>
                         </div>
                     </div>
@@ -129,9 +122,9 @@ export default function NavBar() {
                         <div className="space-y-1 px-2 pb-3 pt-2">
                             {isLoged &&
                                 <>
-                                    <Link href="/audioguides" className="defaultButtonNV">t('my_audioguides')</Link>
-                                    <Link href="/audioguides/new" className="defaultButtonNV">t('create_audioguide')</Link>
-                                </>                            }
+                                    <Link href="/audioguides" className="defaultButtonNV">{t('my_audioguides')}</Link>
+                                    <Link href="/audioguides/new" className="defaultButtonNV">{t('create_audioguide')}</Link>
+                                </>}
 
                         </div>
                     </div>
@@ -139,9 +132,5 @@ export default function NavBar() {
             )
             }
         </>
-
     )
-
-
-
 }
