@@ -73,7 +73,7 @@ export default function Profile() {
             setErrorF1(t('invalid_name'));
             return;
         }
-        if (!regexName.test(userInfo!.surname)) {
+        if (userInfo!.surname.trim() != '' && !regexName.test(userInfo!.surname)) {
             setErrorF1(t('invalid_surname'));
             return;
         }
@@ -249,9 +249,6 @@ export default function Profile() {
                                 alt="Imagen del perfil"
                                 style={{ width: '50%', aspectRatio: '1/1' }}
                             />
-                            {
-                                //TODO: Cambiar idioma
-                            }
                             <input type="file" accept=".jpg, .jpeg"
                                 onChange={handleImageUpload}
                             />

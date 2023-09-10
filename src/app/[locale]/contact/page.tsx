@@ -56,7 +56,7 @@ export default function Contact() {
           onSubmit={handleSubmit}>
           <div>
             <label 
-              className="defaulLabel" 
+              className="defaultLabel" 
               htmlFor="contactName">
                 {t('name')}
             </label>
@@ -82,10 +82,11 @@ export default function Contact() {
               value={email} 
               required/>
           </div>
-          <p>{t('question_feedback')}</p>
-          {
-            //TODO: cambiar por un textarea
-          }
+          <label 
+              className="defaultLabel" 
+              htmlFor="contactFeedback">
+                {t('question_feedback')}
+            </label>
           <textarea 
             className="defaultInput" 
             name="question"

@@ -1,13 +1,10 @@
 "use client";
 
 import firebaseApp from "@/services/firebaseService";
-import { getAuth, signOut } from "firebase/auth";
 import {useTranslations} from 'next-intl';
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 
 export default function Home() {
-
-  const auth = getAuth(firebaseApp);
 
   const imageURL = "https://firebasestorage.googleapis.com/v0/b/audioguias-24add.appspot.com/o/images%2Fdefault%2FhomeWeb.jpg?alt=media&token=78e5faa5-5fd0-4db3-a616-563008b27611";
   
@@ -42,8 +39,8 @@ export default function Home() {
     }}>
       <section className="hero p-5 text-center">
         <h1 className="defaultTitleWhite tracking-widest">AUDIOGUIAS</h1>
-        <p className="text-white text-3xl">{t('welcome_message2')}</p>
-        <p className="text-white text-3xl">{t('welcome_message3')}</p>
+        <p className="text-white text-2xl">{t('welcome_message2')}</p>
+        <p className="text-white text-2xl">{t('welcome_message3')}</p>
         <br />
         <button onClick={downloadFile} className="redButtonWA">{t('download_message')}</button>
       </section>
